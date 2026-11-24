@@ -1,57 +1,57 @@
 feature,area,priority,original,clone,notes
-Sign up and log in with email,auth,must,yes,no,magic link or password
+Sign up and log in with email,auth,must,yes,yes,email + password; sessions in DB
 Sign in with Google,auth,should,yes,no,
-Dashboard lists my presentations,dashboard,must,yes,no,S03
-Empty state on first run with Create new,dashboard,must,yes,no,S03 empty
-Create picker (generate / paste / import),create,must,yes,no,S04
-Generate from a one-line prompt,create,must,yes,no,F01 core loop
-Choose number of cards,create,must,yes,no,
-Choose output language,create,should,yes,no,
-Choose format presentation or document,create,should,yes,no,webpage/social are could
-Paste in text to make a deck,create,must,yes,no,F02
-Text mode generate / condense / preserve,create,should,yes,no,
-Editable outline before generating,outline,must,yes,no,S08
-Reorder add and delete outline cards,outline,must,yes,no,
-Text amount tone and audience settings,outline,should,yes,no,
-Pick theme before generating,outline,must,yes,no,
-Pick image source (AI / stock / none),outline,should,yes,no,
-Cards stream in while generating,generate,must,yes,no,S09
-Credits shown and deducted per generation,billing,must,yes,no,
-Card editor with inline rich text,editor,must,yes,no,S10
-Insert blocks via + and slash menu,editor,must,yes,no,S11
-Bullets numbered quote callout blocks,editor,must,yes,no,
-Columns and smart layouts,editor,should,yes,no,
-Images in cards (accent image),editor,must,yes,no,
-Card layouts (accent left right top background),editor,must,yes,no,S12
-Thumbnail rail with drag reorder,editor,must,yes,no,
-Duplicate and delete cards,editor,must,yes,no,
-Undo and redo,editor,must,yes,no,
-Autosave,editor,must,yes,no,
-Speaker notes,editor,should,yes,no,
+Dashboard lists my presentations,dashboard,must,yes,yes,"search, previews in theme"
+Empty state on first run with Create new,dashboard,must,yes,yes,S03 empty
+Create picker (generate / paste / import),create,must,yes,yes,plus templates
+Generate from a one-line prompt,create,must,yes,partial,offline drafting engine until the Claude engine lands in backend
+Choose number of cards,create,must,yes,yes,capped by plan
+Choose output language,create,should,yes,partial,setting stored and sent; offline engine writes English
+Choose format presentation or document,create,should,yes,partial,format stored; both render as cards
+Paste in text to make a deck,create,must,yes,yes,--- and headings split cards
+Text mode generate / condense / preserve,create,should,yes,yes,
+Editable outline before generating,outline,must,yes,yes,S08
+Reorder add and delete outline cards,outline,must,yes,yes,"buttons, keyboard reachable"
+Text amount tone and audience settings,outline,should,yes,partial,amount applied offline; tone/audience need the AI engine
+Pick theme before generating,outline,must,yes,yes,6 original themes
+Pick image source (AI / stock / none),outline,should,yes,partial,artwork + none work; photo search needs Unsplash key
+Cards stream in while generating,generate,must,yes,yes,NDJSON stream
+Credits shown and deducted per generation,billing,must,yes,yes,"charged in DB transaction, refunded on failure"
+Card editor with inline rich text,editor,must,yes,yes,"**bold** *italic* [links], Ctrl+B/I"
+Insert blocks via + and slash menu,editor,must,yes,yes,"13 block types, searchable, keyboard"
+Bullets numbered quote callout blocks,editor,must,yes,yes,
+Columns and smart layouts,editor,should,yes,partial,columns + big numbers; no diagram layouts yet
+Images in cards (accent image),editor,must,yes,yes,link or theme artwork
+Card layouts (accent left right top background),editor,must,yes,yes,S12
+Thumbnail rail with drag reorder,editor,must,yes,yes,"drag, or Alt+arrows"
+Duplicate and delete cards,editor,must,yes,yes,
+Undo and redo,editor,must,yes,yes,100 steps
+Autosave,editor,must,yes,yes,"700ms debounce, retry when offline"
+Speaker notes,editor,should,yes,yes,
 Tables and charts,editor,could,yes,no,
 Video and web embeds,editor,could,yes,no,
-Switch theme live,themes,must,yes,no,F05
+Switch theme live,themes,must,yes,yes,F05
 Custom theme (fonts colours logo),themes,should,yes,no,
-AI edit a card or whole deck by chat,ai,must,yes,no,S14
+AI edit a card or whole deck by chat,ai,must,yes,partial,UI + credits done; offline engine is rule-based
 AI generate an image for a card,ai,should,yes,no,
-Present mode fullscreen with keyboard nav,present,must,yes,no,F06
-Presenter view with notes,present,could,yes,no,
-Share link with access level,sharing,must,yes,no,F07
-Public read-only view for guests,sharing,must,yes,no,S18
+Present mode fullscreen with keyboard nav,present,must,yes,yes,F06
+Presenter view with notes,present,could,yes,yes,N toggles notes panel
+Share link with access level,sharing,must,yes,yes,off / view
+Public read-only view for guests,sharing,must,yes,yes,no-access page when off
 Invite collaborators by email,sharing,should,yes,no,
-Embed code,sharing,could,yes,no,
+Embed code,sharing,could,yes,yes,
 Password protect a link,sharing,could,yes,no,paid
-Export to PDF,export,must,yes,no,
-Export to PPTX,export,should,yes,no,
+Export to PDF,export,must,yes,yes,"print view, one card per page"
+Export to PPTX,export,should,yes,yes,editable text + notes
 Export to PNG,export,could,yes,no,
-View analytics per presentation,analytics,should,yes,no,S19
-Per-card engagement analytics,analytics,could,yes,no,
-Rename duplicate favourite trash restore,dashboard,should,yes,no,F10
+View analytics per presentation,analytics,should,yes,yes,"viewers, avg time, 14-day chart"
+Per-card engagement analytics,analytics,could,yes,partial,"cards seen per viewer, not per card"
+Rename duplicate favourite trash restore,dashboard,should,yes,yes,F10
 Folders,dashboard,could,yes,no,
-Templates gallery,templates,should,yes,no,S20
-Import pptx / docx / pdf / URL,create,could,yes,no,S07
+Templates gallery,templates,should,yes,yes,4 original templates
+Import pptx / docx / pdf / URL,create,could,yes,partial,.txt and .md only
 Paid plans with Stripe and credit top-ups,billing,must,yes,no,F11
-Remove watermark on paid plans,billing,should,yes,no,
+Remove watermark on paid plans,billing,should,yes,yes,badge on free plan's shared decks
 Comments on cards,collab,could,yes,no,
 Realtime multiplayer editing,collab,could,yes,no,deferred
 Version history,editor,could,yes,no,

@@ -1,10 +1,9 @@
 -- Schema for the presentation-maker clone. Postgres 15+.
 -- Access rules: one authorisation check per query in the data layer
--- (src/server/db/queries.ts). Every user-owned row carries user_id and every
+-- (src/server/queries.ts). Every user-owned row carries user_id and every
 -- query filters on it. No RLS: the app talks to Postgres with one server role.
--- Times are timestamptz (UTC). Money is integer cents + currency.
+-- Times are timestamptz (UTC). gen_random_uuid() is core since Postgres 13.
 
-create extension if not exists pgcrypto;
 
 create table users (
   id uuid primary key default gen_random_uuid(),

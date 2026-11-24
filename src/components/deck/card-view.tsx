@@ -115,14 +115,14 @@ export function CardFrame({
     case "accent_right":
       return (
         <div className={cn(base, "grid grid-cols-1 sm:grid-cols-[2fr_3fr]", card.layout === "accent_right" && "sm:grid-cols-[3fr_2fr]")}>
-          <div className={cn("min-h-40 sm:min-h-0", card.layout === "accent_right" && "sm:order-2")}>{media}</div>
+          <div className={cn("h-[12em] sm:h-auto", card.layout === "accent_right" && "sm:order-2")}>{media}</div>
           {content}
         </div>
       );
     case "accent_top":
       return (
         <div className={cn(base, "flex flex-col")}>
-          <div className="h-[30%] min-h-32 max-h-64">{media}</div>
+          <div className="h-[9em] sm:h-[12em]">{media}</div>
           {content}
         </div>
       );
