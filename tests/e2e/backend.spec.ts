@@ -211,6 +211,20 @@ test.describe("jobs", () => {
     expect(ok.status()).toBe(200);
     expect((await ok.json()).ok).toBe(true);
   });
+
+  test("free plan tops back up to 25 once a day", async ({ baseURL }) => {
+    const user = await pwRequest.newContext({ baseURL });
+    await signUpApi(user);
+    for (let i = 0; i < 10; i++) await generateDeckApi(user, "", "Drain", 10); // 0 left
+    expect((await (await user.get("/api/auth/me")).json()).credits).toBe(0);
+    const cron = await pwRequest.newContext({ baseURL });
+    const run = () => cron.get("/api/cron/daily", { headers: { authorization: "Bearer test-cron-secret" } });
+    expect((await (await run()).json()).results.freeTopUps).toBeGreaterThanOrEqual(1);
+    expect((await (await user.get("/api/auth/me")).json()).credits).toBe(25);
+    await generateDeckApi(user, "", "Spend", 1); // 25 - 13 = 12
+    await run(); // same day: no second top-up
+    expect((await (await user.get("/api/auth/me")).json()).credits).toBe(12);
+  });
 });
 
 test.describe("claude engine (mock API)", () => {

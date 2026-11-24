@@ -46,16 +46,17 @@ export function SettingsView({ user }: { user: SessionUser }) {
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <h2 id="plans-h" className="text-lg font-semibold mr-auto">Plan and credits</h2>
           <CreditsMeter credits={user.credits} />
-          <Segmented label="Billing period" value={period} onChange={setPeriod} options={[{ value: "monthly", label: "Monthly" }, { value: "yearly", label: "Yearly −25%" }]} />
+          <Segmented label="Billing period" value={period} onChange={setPeriod} options={[{ value: "monthly", label: "Monthly" }, { value: "yearly", label: "Yearly, 2 months free" }]} />
         </div>
         <ul className="grid gap-4 md:grid-cols-3">
           {PLANS.map((p) => {
             const current = p.key === user.plan;
-            const price = period === "yearly" ? p.yearlyPerMonth : p.monthly;
+            const price = period === "yearly" ? p.yearly : p.monthly;
             return (
               <li key={p.key} className={cn("rounded-lg border p-5 flex flex-col gap-3 bg-bg", current ? "border-accent ring-1 ring-accent" : "border-border")}>
                 <div className="flex items-center justify-between"><h3 className="font-semibold">{p.name}</h3>{current && <span className="text-xs rounded-pill bg-accent-soft text-accent px-2 py-0.5 font-semibold">Current</span>}</div>
-                <div><span className="text-xl font-bold">${price}</span><span className="text-sm text-text-muted"> / month{price && period === "yearly" ? ", billed yearly" : ""}</span></div>
+                <div><span className="text-xl font-bold">${price}</span><span className="text-sm text-text-muted"> / {period === "yearly" ? "year" : "month"}</span></div>
+                <p className="text-xs text-text-muted -mt-2">{p.forWho}</p>
                 <p className="text-sm font-medium">{p.credits}</p>
                 <ul className="text-sm text-text-muted flex flex-col gap-1.5 flex-1">
                   {p.features.map((f) => <li key={f} className="flex gap-2"><Check size={15} className="text-success shrink-0 mt-0.5" aria-hidden="true" />{f}</li>)}

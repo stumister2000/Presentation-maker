@@ -1,0 +1,20 @@
+{
+  "avoid": [
+    "Gamma",
+    "Gamma Tech",
+    "gamma.app"
+  ],
+  "app_store": {
+    "name": "Fairdeck: Slides from a Prompt",
+    "subtitle": "See the price before you make",
+    "promotional_text": "Out of credits? Build your deck from your own outline at no cost. Your work is never held back.",
+    "description": "Fairdeck turns an idea into a designed presentation, and shows you the price before it starts.\n\nType one sentence or paste your notes. Fairdeck drafts an outline you can edit, reorder and trim. Add design notes like \"one idea per card\", pick a theme, and the cards appear one by one.\n\nNothing catches you out:\n- The credit cost is shown next to the button, before you make anything\n- Out of credits? Build the deck from your own outline at no cost. Your work is never held back\n- One switch sets the text size for the whole deck, including the PowerPoint file\n- Cancel a paid plan in one click\n\nEverything you expect:\n- Edit any card: headings, lists, columns, big numbers, quotes, images\n- Six themes you can switch at any time\n- Present full screen with speaker notes\n- Share a view-only link and see how many people opened it\n- Export to PDF and PowerPoint\n\nStart with 400 credits and a daily top-up. Solo is $8 a month for 1,000 credits. Pro is $20 a month for 2,500 credits and 40-card decks.",
+    "keywords": "presentation,deck,pitch,outline,powerpoint,pptx,slideshow,ai,maker,speaker notes,talk",
+    "whats_new": "Set the text size for a whole deck in one go, from the Theme panel."
+  },
+  "google_play": {
+    "title": "Fairdeck: Slides from a Prompt",
+    "short_description": "Describe your talk, get an editable deck. The price shown first.",
+    "full_description": "Fairdeck turns an idea into a designed presentation, and shows you the price before it starts.\n\nType one sentence or paste your notes. Fairdeck drafts an outline you can edit, reorder and trim. Add design notes like \"one idea per card\", pick a theme, and the cards appear one by one.\n\nNothing catches you out:\n- The credit cost is shown next to the button, before you make anything\n- Out of credits? Build the deck from your own outline at no cost. Your work is never held back\n- One switch sets the text size for the whole deck, including the PowerPoint file\n- Cancel a paid plan in one click\n\nEverything you expect:\n- Edit any card: headings, lists, columns, big numbers, quotes, images\n- Six themes you can switch at any time\n- Present full screen with speaker notes\n- Share a view-only link and see how many people opened it\n- Export to PDF and PowerPoint\n\nStart with 400 credits and a daily top-up. Solo is $8 a month for 1,000 credits. Pro is $20 a month for 2,500 credits and 40-card decks."
+  }
+}

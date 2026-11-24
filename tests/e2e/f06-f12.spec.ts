@@ -193,7 +193,7 @@ test.describe("F11 plans", () => {
     await a11y(page);
     await expect(page.getByRole("heading", { name: "Plan and credits" })).toBeVisible();
     await expect(page.getByText("Current")).toHaveCount(1);
-    await expect(page.getByRole("button", { name: "Upgrade to Plus" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Upgrade to Solo" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Upgrade to Pro" })).toBeVisible();
   });
 });

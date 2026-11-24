@@ -11,7 +11,7 @@ export const SIGNUP_CREDITS = 400;
 export const PLAN_LIMITS = {
   free: { maxCards: 10, watermark: true, monthlyCredits: 0 },
   plus: { maxCards: 20, watermark: false, monthlyCredits: 1000 },
-  pro: { maxCards: 40, watermark: false, monthlyCredits: 4000 },
+  pro: { maxCards: 40, watermark: false, monthlyCredits: 2500 },
 } as const;
 export type Plan = keyof typeof PLAN_LIMITS;
 
