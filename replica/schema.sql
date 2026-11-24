@@ -155,3 +155,5 @@ alter table users add column email_verified_at timestamptz;
 alter table users add column google_sub text;
 create unique index users_google_sub_key on users (google_sub) where google_sub is not null;
 alter table cards add column image_credit text not null default '';
+-- Deck-wide text size (fix from replica-entrepreneur: whole-deck text size in one go).
+alter table decks add column text_scale text not null default 'm' check (text_scale in ('s','m','l','xl'));

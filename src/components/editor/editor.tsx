@@ -18,7 +18,7 @@ import { ThemeDrawer, AiDrawer, ShareModal, ExportModal, AnalyticsDrawer, ImageM
 import { useDeckCards } from "./use-deck";
 import { api } from "@/lib/api";
 import { blankCard, cardTitle, type Card, type Layout } from "@/lib/blocks";
-import { getTheme, themeStyle } from "@/lib/themes";
+import { getTheme, themeStyle, withScale } from "@/lib/themes";
 import { exportPptx } from "@/lib/export-pptx";
 import type { Deck } from "@/server/queries";
 import { cn } from "@/lib/cn";
@@ -35,6 +35,7 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
   const d = useDeckCards(deck.id, deck.cards);
   const [title, setTitle] = useState(deck.title);
   const [themeId, setThemeId] = useState(deck.themeId);
+  const [textScale, setTextScale] = useState(deck.textScale);
   const [access, setAccess] = useState(deck.linkAccess);
   const [credits, setCredits] = useState(initialCredits);
   const [panel, setPanel] = useState<Panel>(null);
@@ -48,7 +49,7 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
   const [rail, setRail] = useState(true);
   const [dragFrom, setDragFrom] = useState<number | null>(null);
   const cardEls = useRef<Record<string, HTMLElement | null>>({});
-  const theme = getTheme(themeId);
+  const theme = withScale(getTheme(themeId), textScale);
 
   const patch = useCallback(async (body: object) => {
     try { await api(`/api/decks/${deck.id}`, { method: "PATCH", json: body }); }
@@ -152,7 +153,7 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
 
         {/* canvas */}
         <main className="deck-root flex-1 min-w-0 px-3 sm:px-10 py-8 sm:py-10" style={themeStyle(theme)}>
-          <div className="mx-auto max-w-[var(--layout-card-max)] flex flex-col text-[clamp(13px,1.75vw,18px)] sm:pl-[2.6em]">
+          <div className="mx-auto max-w-[var(--layout-card-max)] flex flex-col sm:pl-[2.6em]" style={{ fontSize: "calc(clamp(13px, 1.75vw, 18px) * var(--deck-scale, 1))" }}>
             {d.cards.map((c, i) => (
               <section key={c.id} ref={(el) => { cardEls.current[c.id] = el; }} data-index={i} aria-label={`Card ${i + 1}`} className="scroll-mt-20 group/card">
                 <div className="no-print flex items-center gap-1 mb-1.5 text-[var(--deck-muted)] text-[13px] opacity-70 group-hover/card:opacity-100 focus-within:opacity-100">
@@ -206,7 +207,8 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
         }} />
       )}
 
-      <ThemeDrawer open={panel === "theme"} onClose={() => setPanel(null)} value={themeId} onChange={(k) => { setThemeId(k); void patch({ themeId: k }); }} />
+      <ThemeDrawer open={panel === "theme"} onClose={() => setPanel(null)} value={themeId} onChange={(k) => { setThemeId(k); void patch({ themeId: k }); }}
+        textScale={textScale} onTextScale={(s) => { setTextScale(s); void patch({ textScale: s }); }} />
       <AiDrawer open={panel === "ai"} onClose={() => setPanel(null)} deckId={deck.id} cardId={aiCard}
         cardLabel={aiCard ? cardTitle(d.cards.find((c) => c.id === aiCard) ?? d.cards[0]) : null} credits={credits}
         onApplied={async (cards, cr) => { await d.flush(); d.replaceCards(cards); if (typeof cr === "number") setCredits(cr); toast(`Updated ${cards.length} card${cards.length === 1 ? "" : "s"}`, "success"); }} />

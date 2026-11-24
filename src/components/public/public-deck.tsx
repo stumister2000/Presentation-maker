@@ -5,13 +5,13 @@ import { Play } from "lucide-react";
 import { CardView } from "@/components/deck/card-view";
 import { Presenter } from "@/components/present/presenter";
 import type { Card } from "@/lib/blocks";
-import { getTheme, themeStyle } from "@/lib/themes";
+import { getTheme, themeStyle, withScale } from "@/lib/themes";
 import { APP_NAME } from "@/lib/brand";
 
-export function PublicDeck({ slug, title, cards, themeId, watermark, embed }: {
-  slug: string; title: string; cards: Card[]; themeId: string; watermark: boolean; embed: boolean; firstTitle: string;
+export function PublicDeck({ slug, title, cards, themeId, textScale, watermark, embed }: {
+  slug: string; title: string; cards: Card[]; themeId: string; textScale: string; watermark: boolean; embed: boolean; firstTitle: string;
 }) {
-  const theme = getTheme(themeId);
+  const theme = withScale(getTheme(themeId), textScale);
   const [presenting, setPresenting] = useState<number | null>(null);
   const seen = useRef(new Set<number>());
   const started = useRef(Date.now());
@@ -45,7 +45,7 @@ export function PublicDeck({ slug, title, cards, themeId, watermark, embed }: {
           </button>
         </header>
       )}
-      <main className="mx-auto max-w-[var(--layout-card-max)] px-3 sm:px-6 py-6 flex flex-col gap-8 text-[clamp(12px,1.75vw,18px)]">
+      <main className="mx-auto max-w-[var(--layout-card-max)] px-3 sm:px-6 py-6 flex flex-col gap-8" style={{ fontSize: "calc(clamp(12px, 1.75vw, 18px) * var(--deck-scale, 1))" }}>
         {cards.map((c, i) => (
           <section key={c.id} data-pcard data-index={i} aria-label={`Card ${i + 1}`}><CardView card={c} theme={theme} /></section>
         ))}

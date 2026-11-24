@@ -14,6 +14,7 @@ export interface GenSettings {
   audience: string;
   imageSource: ImageSource;
   themeId: string;
+  designNotes: string;
 }
 
 export interface OutlineItem {
@@ -31,6 +32,7 @@ export const DEFAULT_SETTINGS: GenSettings = {
   audience: "",
   imageSource: "art",
   themeId: "paper",
+  designNotes: "",
 };
 
 export const LANGUAGES = ["English", "Spanish", "French", "German", "Portuguese", "Italian", "Dutch", "Japanese", "Chinese (Simplified)", "Hindi"];

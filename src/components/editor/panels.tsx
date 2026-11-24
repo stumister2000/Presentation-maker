@@ -13,9 +13,17 @@ import { api, ApiError } from "@/lib/api";
 import { AI_EDIT_COST } from "@/lib/generation";
 import { isSafeUrl, type Card } from "@/lib/blocks";
 
-export function ThemeDrawer({ open, onClose, value, onChange }: { open: boolean; onClose: () => void; value: string; onChange: (k: string) => void }) {
+export function ThemeDrawer({ open, onClose, value, onChange, textScale, onTextScale }: {
+  open: boolean; onClose: () => void; value: string; onChange: (k: string) => void; textScale: string; onTextScale: (s: "s" | "m" | "l" | "xl") => void;
+}) {
   return (
     <Drawer open={open} onClose={onClose} title="Theme">
+      <div className="mb-6">
+        <h3 className="text-sm font-semibold mb-2">Text size, whole deck</h3>
+        <Segmented label="Text size" value={textScale as "s" | "m" | "l" | "xl"} onChange={onTextScale}
+          options={[{ value: "s", label: "S" }, { value: "m", label: "M" }, { value: "l", label: "L" }, { value: "xl", label: "XL" }]} />
+        <p className="text-xs text-text-muted mt-1.5">Applies to every card, present mode, shared links and PowerPoint export.</p>
+      </div>
       <p className="text-sm text-text-muted mb-4">Changes colours and fonts on every card. Your content stays put.</p>
       <ThemeGrid value={value} onChange={onChange} columns={2} />
     </Drawer>

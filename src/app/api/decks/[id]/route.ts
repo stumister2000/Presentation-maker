@@ -17,6 +17,7 @@ const Patch = z.object({
   archived: z.boolean().optional(),
   linkAccess: z.enum(["none", "view"]).optional(),
   dimensions: z.enum(["fluid", "16x9", "4x3"]).optional(),
+  textScale: z.enum(["s", "m", "l", "xl"]).optional(),
 });
 
 export const PATCH = route(async (req, { params }: Ctx) => {

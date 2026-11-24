@@ -67,17 +67,18 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
     } finally { setStreaming(false); }
   }
 
-  async function generate() {
+  async function generate(free = false) {
     const clean = outline.map((o) => ({ title: o.title.trim(), bullets: o.bullets.map((b) => b.trim()).filter(Boolean) })).filter((o) => o.title);
     if (!clean.length) { setError("Add at least one card title."); return; }
-    if (credits < generationCost(clean.length)) { setNoCredits(true); return; }
+    if (!free && credits < generationCost(clean.length)) { setNoCredits(true); return; }
+    setNoCredits(false);
     setError(null);
     setStep("generating");
     setCards([]);
     let deckId: string | null = null;
     abort.current = new AbortController();
     try {
-      const res = await apiStream("/api/generate/deck", { source, input, settings: { ...s, numCards: clean.length }, outline: clean }, abort.current.signal);
+      const res = await apiStream("/api/generate/deck", { source, input, settings: { ...s, numCards: clean.length }, outline: clean, free }, abort.current.signal);
       let failed: string | null = null;
       await readStream(res, (e) => {
         if (e.type === "deck") deckId = e.id;
@@ -86,7 +87,7 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
         if (e.type === "error") failed = e.message;
       });
       if (failed) throw new ApiError(500, failed);
-      if (deckId) { router.push(`/decks/${deckId}?new=1`); router.refresh(); }
+      if (deckId) router.push(`/decks/${deckId}?new=1`);
     } catch (e) {
       if (e instanceof ApiError && e.code === "out_of_credits") { setNoCredits(true); setStep("outline"); return; }
       if ((e as Error).name === "AbortError") return;
@@ -103,7 +104,7 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
       <div className="mx-auto max-w-3xl">
         <h1 className="text-xl font-bold flex items-center gap-2"><Sparkles className="text-accent" size={22} aria-hidden="true" />{error ? "That did not finish" : "Designing your deck"}</h1>
         <p className="text-text-muted mt-1 mb-6" aria-live="polite">{error ? error : `${cards.length} of ${outline.length} cards ready`}</p>
-        {error && <div className="flex gap-2 mb-6"><Button variant="primary" onClick={generate}><RotateCcw size={16} />Try again</Button><Button onClick={() => setStep("outline")}>Back to outline</Button></div>}
+        {error && <div className="flex gap-2 mb-6"><Button variant="primary" onClick={() => generate()}><RotateCcw size={16} />Try again</Button><Button onClick={() => setStep("outline")}>Back to outline</Button></div>}
         <ol className="flex flex-col gap-4">
           {outline.map((o, i) => (
             <li key={i} className="aspect-video rounded-lg overflow-hidden border border-border">
@@ -172,14 +173,17 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
             </div>
             <TextField label="Audience" placeholder="e.g. investors, new hires, Year 6" value={s.audience} maxLength={120} onChange={(e) => set("audience", e.target.value)} />
             <TextField label="Tone" placeholder="e.g. confident, playful, plain" value={s.tone} maxLength={80} onChange={(e) => set("tone", e.target.value)} />
+            <TextArea label="Design notes (optional)" rows={3} maxLength={500} value={s.designNotes} onChange={(e) => set("designNotes", e.target.value)}
+              placeholder="e.g. One idea per card. No bullet points. Say 'members', never 'customers'."
+              hint="The AI follows these as written." />
             <div className="rounded-lg bg-surface p-4 flex flex-col gap-3">
               <div className="flex items-center justify-between text-sm"><span>{outline.length} cards</span><span className="flex items-center gap-1.5">Uses {cost} of <CreditsMeter credits={credits} /></span></div>
               {error && <p role="alert" className="text-sm text-danger">{error}</p>}
-              <Button variant="primary" size="lg" disabled={streaming || !outline.length} onClick={generate}><Sparkles size={18} />Generate deck</Button>
+              <Button variant="primary" size="lg" disabled={streaming || !outline.length} onClick={() => generate()}><Sparkles size={18} />Generate deck</Button>
             </div>
           </aside>
         </div>
-        <OutOfCredits open={noCredits} onClose={() => setNoCredits(false)} need={cost} have={credits} />
+        <OutOfCredits open={noCredits} onClose={() => setNoCredits(false)} need={cost} have={credits} onFree={() => generate(true)} />
       </div>
     );
   }
@@ -255,11 +259,12 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
   );
 }
 
-function OutOfCredits({ open, onClose, need, have }: { open: boolean; onClose: () => void; need: number; have: number }) {
+function OutOfCredits({ open, onClose, need, have, onFree }: { open: boolean; onClose: () => void; need: number; have: number; onFree: () => void }) {
   return (
     <Modal open={open} onClose={onClose} title="You need a few more credits" size="sm"
-      footer={<><Button onClick={onClose}>Not now</Button><Link href="/settings#plans" className="inline-flex h-10 items-center rounded-md bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover">See plans</Link></>}>
-      <p className="text-sm text-text-muted">This deck needs {need} credits and you have {have}. Try fewer cards, buy a one-off pack of 500, or upgrade for a monthly allowance.</p>
+      footer={<><Link href="/settings#plans" className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface">See plans</Link><Button variant="primary" onClick={onFree}>Build from my outline, free</Button></>}>
+      <p className="text-sm text-text-muted">AI writing for this deck needs {need} credits and you have {have}.</p>
+      <p className="text-sm text-text-muted mt-2">You can still make it: we lay out your outline as it is, with your theme, at no cost. Nothing you wrote is lost.</p>
     </Modal>
   );
 }

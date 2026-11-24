@@ -61,3 +61,9 @@ Licensed image model / stock partners,ai,could,yes,skip,use our own providers un
 Public gallery and user network,growth,could,yes,skip,the network is not rebuildable
 Google Slides / Canva partner export,export,could,yes,skip,partner deals
 Custom domains for published sites at scale,sharing,could,yes,skip,basic version later if needed
+Build a deck from my outline free when out of credits,billing,must,no,yes,fix 1 (replica/fixes.md): never hold work hostage; test X1-H1
+Daily free credit top-up on the free plan,billing,should,no,no,fix 2: priced in replica-launch
+Deck-wide text size (S/M/L/XL) incl. PPTX,themes,should,no,yes,fix 3; test X2-H1
+Design notes the AI follows literally,ai,should,no,yes,fix 4; tests X3-H1 + mock API
+Brand kit (logo colours fonts) on every deck,themes,should,no,no,fix 5; promotes the custom theme row
+PowerPoint fidelity pass checked in PowerPoint Keynote Slides,export,should,no,partial,"fix 6; theme fonts + scaled sizes done, manual check pending"

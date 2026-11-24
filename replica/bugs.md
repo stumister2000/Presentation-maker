@@ -11,6 +11,7 @@ Only reproduced bugs are listed. Every fix has a test that failed first and is k
 | BUG-005 | S3 | First characters typed into a new block are lost | fixed in c1fa4ea |
 | BUG-006 | S3 | Paragraph text duplicated after editing | fixed in 96a050a |
 | BUG-007 | S3 | Phone layout: artwork takes half the card, cards overflow the screen | fixed in 96a050a |
+| BUG-008 | S4 | Page title briefly missing after generating a deck (double render) | fixed in the entrepreneur-stage commit |
 
 Open S1: none. Open S2: none.
 
@@ -118,6 +119,21 @@ Status: fixed in 96a050a (separate keys for edit and view states). Covered now b
 Expected: card fits the width, image a modest band.
 Actual: artwork ~420px tall; block handles pushed cards off the right edge.
 Status: fixed in 96a050a. Covered by M-H1 (no horizontal overflow).
+
+### BUG-008: Page title briefly missing after generating a deck
+
+- Severity: S4
+- Flow / case: F01 → F03 (axe `document-title`, intermittent: a different spec failed in each of three full runs)
+- Screen: S10
+- Build: after a1e53c6
+
+Steps
+1. Generate a deck; the app navigates to the editor.
+
+Expected: the tab title is the deck title throughout.
+Actual: under load, the title was empty for a moment: the create flow called `router.refresh()` right after `router.push()`, rendering the editor twice.
+Evidence: three full runs, three different axe `document-title` failures; isolated reruns green.
+Status: fixed (redundant refresh removed); two consecutive full runs green, 55/55.
 
 ## To check (not reproduced)
 

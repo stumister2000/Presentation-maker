@@ -14,6 +14,7 @@ export const SettingsSchema = z.object({
   audience: z.string().trim().max(120).default(""),
   imageSource: z.enum(["art", "stock", "none"]).default("art"),
   themeId: z.string().max(40).default("paper"),
+  designNotes: z.string().trim().max(500).default(""),
 });
 
 export const InputSchema = z.object({

@@ -36,8 +36,8 @@ export function ScaledCard({ card, theme, className, fit = "width", fixedRatio =
   }, [fit]);
   return (
     <div ref={box} className={cn("deck-root relative overflow-hidden", className)} style={themeStyle(theme)} aria-hidden={fit === "width" || undefined}>
-      <div ref={inner} className="absolute left-1/2 origin-top text-[18px]"
-        style={{ width: BASE_WIDTH, top, transform: `translateX(-50%) scale(${scale})`, visibility: scale ? "visible" : "hidden" }}>
+      <div ref={inner} className="absolute left-1/2 origin-top"
+        style={{ fontSize: "calc(18px * var(--deck-scale, 1))", width: BASE_WIDTH, top, transform: `translateX(-50%) scale(${scale})`, visibility: scale ? "visible" : "hidden" }}>
         <CardView card={card} theme={theme} fixedRatio={fixedRatio} className={fit === "width" ? "!rounded-none !shadow-none" : undefined} />
       </div>
     </div>

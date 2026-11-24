@@ -23,6 +23,7 @@ export interface DeckSummary {
   title: string;
   slug: string;
   themeId: string;
+  textScale: string;
   format: DeckFormat;
   isFavorite: boolean;
   archivedAt: string | null;
@@ -32,6 +33,7 @@ export interface DeckSummary {
 }
 export interface Deck extends Omit<DeckSummary, "cardCount" | "firstCard"> {
   dimensions: string;
+  textScale: string;
   linkAccess: LinkAccess;
   createdAt: string;
   cards: Card[];
@@ -107,7 +109,7 @@ export async function refundCredits(userId: string, amount: number, refId: strin
 
 export async function listDecks(userId: string, view: "all" | "favorites" | "trash" | "templates" = "all"): Promise<DeckSummary[]> {
   const rows = await q`
-    select d.id, d.title, d.slug, d.theme_id, d.format, d.is_favorite, d.archived_at, d.updated_at,
+    select d.id, d.title, d.slug, d.theme_id, d.text_scale, d.format, d.is_favorite, d.archived_at, d.updated_at,
       (select count(*)::int from cards c where c.deck_id = d.id) as card_count,
       (select row_to_json(c) from cards c where c.deck_id = d.id order by c.position limit 1) as first_card
     from decks d
@@ -123,6 +125,7 @@ export async function listDecks(userId: string, view: "all" | "favorites" | "tra
     title: r.title as string,
     slug: r.slug as string,
     themeId: r.theme_id as string,
+    textScale: (r.text_scale as string) ?? "m",
     format: r.format as DeckFormat,
     isFavorite: r.is_favorite as boolean,
     archivedAt: r.archived_at ? iso(r.archived_at) : null,
@@ -140,6 +143,7 @@ function deckFromRow(r: Record<string, unknown>, cards: Card[]): Deck {
     themeId: r.theme_id as string,
     format: r.format as DeckFormat,
     dimensions: r.dimensions as string,
+    textScale: (r.text_scale as string) ?? "m",
     linkAccess: r.link_access as LinkAccess,
     isFavorite: r.is_favorite as boolean,
     archivedAt: r.archived_at ? iso(r.archived_at) : null,
@@ -212,6 +216,7 @@ export interface DeckPatch {
   archived?: boolean;
   linkAccess?: LinkAccess;
   dimensions?: string;
+  textScale?: string;
 }
 
 export async function updateDeck(userId: string, deckId: string, p: DeckPatch): Promise<void> {
@@ -222,6 +227,7 @@ export async function updateDeck(userId: string, deckId: string, p: DeckPatch): 
       is_favorite = coalesce(${p.isFavorite ?? null}::boolean, is_favorite),
       link_access = coalesce(${p.linkAccess ?? null}, link_access),
       dimensions = coalesce(${p.dimensions ?? null}, dimensions),
+      text_scale = coalesce(${p.textScale ?? null}, text_scale),
       archived_at = case when ${p.archived ?? null}::boolean is null then archived_at
                          when ${p.archived ?? null}::boolean then now() else null end,
       updated_at = now()
@@ -244,13 +250,15 @@ export async function saveCards(userId: string, deckId: string, cards: Card[]): 
 
 export async function duplicateDeck(userId: string, deckId: string): Promise<string> {
   const d = await getDeck(userId, deckId);
-  return createDeck(userId, {
+  const id = await createDeck(userId, {
     title: `${d.title} (copy)`.slice(0, 200),
     themeId: d.themeId,
     format: d.format,
     dimensions: d.dimensions,
     cards: d.cards.map((c) => ({ ...c, id: crypto.randomUUID() })),
   });
+  if (d.textScale !== "m") await updateDeck(userId, id, { textScale: d.textScale });
+  return id;
 }
 
 export async function deleteDeckForever(userId: string, deckId: string) {

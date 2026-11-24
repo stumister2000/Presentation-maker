@@ -25,6 +25,7 @@ export { expect };
 
 /** WCAG 2.1 A/AA scan of the current page state. */
 export async function a11y(page: Page, exclude: string[] = []) {
+  await expect(page).toHaveTitle(/\S/); // let client navigation finish; a page that never gets a title still fails
   let b = new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]);
   for (const sel of exclude) b = b.exclude(sel);
   const r = await b.analyze();

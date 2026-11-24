@@ -7,7 +7,13 @@ export interface DeckTheme {
   bodyFont: string;
   colors: { page: string; card: string; text: string; muted: string; accent: string };
   dark: boolean;
+  /** deck-wide text size multiplier */
+  scale?: number;
 }
+
+export const TEXT_SCALES = { s: 0.9, m: 1, l: 1.15, xl: 1.3 } as const;
+export type TextScale = keyof typeof TEXT_SCALES;
+export const withScale = (t: DeckTheme, s: string | null | undefined): DeckTheme => ({ ...t, scale: TEXT_SCALES[(s as TextScale) ?? "m"] ?? 1 });
 
 const FONTS = {
   serif: "'Fraunces Variable', Georgia, serif",
@@ -46,6 +52,7 @@ export function themeStyle(t: DeckTheme): React.CSSProperties {
     ["--deck-accent" as string]: t.colors.accent,
     ["--deck-heading-font" as string]: t.headingFont,
     ["--deck-body-font" as string]: t.bodyFont,
+    ["--deck-scale" as string]: String(t.scale ?? 1),
   };
 }
 

@@ -11,5 +11,5 @@ export default async function PrintPage({ params }: { params: Promise<{ id: stri
   if (!u) redirect(`/login?next=/decks/${id}/print`);
   const deck = await getDeck(u.id, id).catch(() => null);
   if (!deck) notFound();
-  return <PrintDeck title={deck.title} cards={deck.cards} themeId={deck.themeId} />;
+  return <PrintDeck title={deck.title} cards={deck.cards} themeId={deck.themeId} textScale={deck.textScale} />;
 }

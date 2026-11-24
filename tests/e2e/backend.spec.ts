@@ -234,6 +234,10 @@ test.describe("claude engine (mock API)", () => {
     expect(last.body.output_config.effort).toBe("medium");
     expect(String(last.headers["anthropic-beta"])).toContain("server-side-fallback-2026-07-01");
     expect(last.body.messages[0].content).toContain("<user_material>");
+    // design notes reach the model, fenced as data
+    await api.post("/api/generate/outline", { data: { source: "prompt", input: "Bees", settings: { numCards: 2, designNotes: "One idea per card. No bullets." } } }).then((r) => r.body());
+    const notesReq = await (await (await pwRequest.newContext()).get("http://localhost:3299/last")).json();
+    expect(notesReq.body.system).toContain("<design_notes>One idea per card. No bullets.</design_notes>");
   });
 
   test("AI edit returns edited cards with the same ids", async () => {

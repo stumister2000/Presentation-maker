@@ -25,5 +25,5 @@ export default async function PublicPage({ params, searchParams }: { params: Pro
       </main>
     );
   }
-  return <PublicDeck slug={slug} title={deck.title} cards={deck.cards} themeId={deck.themeId} watermark={deck.ownerPlan === "free"} embed={(await searchParams).embed === "1"} firstTitle={cardTitle(deck.cards[0])} />;
+  return <PublicDeck slug={slug} title={deck.title} cards={deck.cards} themeId={deck.themeId} textScale={deck.textScale} watermark={deck.ownerPlan === "free"} embed={(await searchParams).embed === "1"} firstTitle={cardTitle(deck.cards[0])} />;
 }

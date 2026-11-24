@@ -4,11 +4,11 @@ import { Printer } from "lucide-react";
 import { CardView } from "@/components/deck/card-view";
 import { Button } from "@/components/ui/button";
 import type { Card } from "@/lib/blocks";
-import { getTheme, themeStyle } from "@/lib/themes";
+import { getTheme, themeStyle, withScale } from "@/lib/themes";
 
 /** Each card on its own 16:9 page. The browser's "Save as PDF" makes the file. */
-export function PrintDeck({ title, cards, themeId }: { title: string; cards: Card[]; themeId: string }) {
-  const theme = getTheme(themeId);
+export function PrintDeck({ title, cards, themeId, textScale }: { title: string; cards: Card[]; themeId: string; textScale: string }) {
+  const theme = withScale(getTheme(themeId), textScale);
   useEffect(() => {
     const t = setTimeout(() => { void document.fonts.ready.then(() => window.print()); }, 600);
     return () => clearTimeout(t);
@@ -22,7 +22,7 @@ export function PrintDeck({ title, cards, themeId }: { title: string; cards: Car
       </div>
       <div className="flex flex-col items-center gap-6 py-6 print:p-0 print:gap-0">
         {cards.map((c) => (
-          <div key={c.id} className="print-card w-[1280px] max-w-full text-[24px]">
+          <div key={c.id} className="print-card w-[1280px] max-w-full" style={{ fontSize: "calc(24px * var(--deck-scale, 1))" }}>
             <CardView card={c} theme={theme} fixedRatio className="print:!rounded-none" />
           </div>
         ))}

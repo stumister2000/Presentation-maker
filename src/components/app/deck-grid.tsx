@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { TextField } from "@/components/ui/field";
 import { useToast } from "@/components/ui/toast";
-import { getTheme } from "@/lib/themes";
+import { getTheme, withScale } from "@/lib/themes";
 import { api, timeAgo } from "@/lib/api";
 import { blankCard } from "@/lib/blocks";
 import type { DeckSummary } from "@/server/queries";
@@ -95,7 +95,7 @@ export function DeckGrid({ decks: initial, view }: { decks: DeckSummary[]; view:
               <Link href={view === "trash" ? "#" : `/decks/${d.id}`} aria-disabled={view === "trash"} className="block rounded-lg focus-visible:outline-2 focus-visible:outline-focus"
                 onClick={(e) => view === "trash" && e.preventDefault()}>
                 <div className="aspect-[16/10] rounded-t-lg overflow-hidden border-b border-border">
-                  {d.firstCard ? <ScaledCard card={d.firstCard} theme={getTheme(d.themeId)} className="h-full w-full" />
+                  {d.firstCard ? <ScaledCard card={d.firstCard} theme={withScale(getTheme(d.themeId), d.textScale)} className="h-full w-full" />
                     : <div className="h-full w-full bg-surface" />}
                 </div>
                 <div className="px-3.5 py-3 pr-12">

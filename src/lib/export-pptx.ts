@@ -37,6 +37,8 @@ export async function exportPptx(title: string, cards: Card[], theme: DeckTheme)
   const font = theme.bodyFont.includes("Grotesk") ? "Arial" : "Calibri";
   const headFont = theme.headingFont.includes("Fraunces") || theme.headingFont.includes("Serif") ? "Georgia" : font;
   const c = theme.colors;
+  const k = theme.scale ?? 1; // deck-wide text size
+  const fs = (n: number) => Math.round(n * k);
 
   for (const card of cards) {
     const slide = pptx.addSlide();
@@ -60,24 +62,24 @@ export async function exportPptx(title: string, cards: Card[], theme: DeckTheme)
       const base = { x, w, fontFace: font, color: hex(c.text), valign: "top" as const, margin: 0 };
       switch (b.type) {
         case "heading": {
-          const size = b.level === 1 ? 40 : b.level === 2 ? 30 : 22;
+          const size = fs(b.level === 1 ? 40 : b.level === 2 ? 30 : 22);
           const h = b.level === 1 ? 1.5 : 0.9;
           slide.addText(stripMarks(b.text), { ...base, y, h, fontSize: size, bold: true, fontFace: headFont, fit: "shrink" });
           y += h + 0.15; break;
         }
         case "paragraph": case "callout": {
           const h = Math.min(2, 0.35 + b.text.length / 220);
-          slide.addText(stripMarks(b.text), { ...base, y, h, fontSize: 16, fit: "shrink" });
+          slide.addText(stripMarks(b.text), { ...base, y, h, fontSize: fs(16), fit: "shrink" });
           y += h + 0.1; break;
         }
         case "quote": {
           const h = 1.2;
-          slide.addText([{ text: `“${stripMarks(b.text)}”`, options: { italic: true, fontSize: 22, breakLine: true } }, ...(b.cite ? [{ text: `— ${b.cite}`, options: { fontSize: 14, color: hex(c.muted) } }] : [])], { ...base, y, h });
+          slide.addText([{ text: `“${stripMarks(b.text)}”`, options: { italic: true, fontSize: fs(22), breakLine: true } }, ...(b.cite ? [{ text: `— ${b.cite}`, options: { fontSize: fs(14), color: hex(c.muted) } }] : [])], { ...base, y, h });
           y += h + 0.1; break;
         }
         case "bullets": case "numbered": {
           const h = Math.min(maxY - y, 0.42 * b.items.length + 0.1);
-          slide.addText(b.items.map((t) => ({ text: stripMarks(t), options: { bullet: b.type === "numbered" ? { type: "number" as const } : true, breakLine: true } })), { ...base, y, h, fontSize: 17, paraSpaceAfter: 6, fit: "shrink" });
+          slide.addText(b.items.map((t) => ({ text: stripMarks(t), options: { bullet: b.type === "numbered" ? { type: "number" as const } : true, breakLine: true } })), { ...base, y, h, fontSize: fs(17), paraSpaceAfter: 6, fit: "shrink" });
           y += h + 0.1; break;
         }
         case "columns": case "stats": {
@@ -85,15 +87,15 @@ export async function exportPptx(title: string, cards: Card[], theme: DeckTheme)
           const cw = (w - 0.3 * (items.length - 1)) / items.length;
           items.forEach(([a, t], k) => {
             slide.addText([
-              { text: stripMarks(a), options: { bold: true, fontSize: b.type === "stats" ? 32 : 18, color: hex(b.type === "stats" ? c.accent : c.text), breakLine: true } },
-              { text: stripMarks(t), options: { fontSize: 14, color: hex(c.muted) } },
+              { text: stripMarks(a), options: { bold: true, fontSize: fs(b.type === "stats" ? 32 : 18), color: hex(b.type === "stats" ? c.accent : c.text), breakLine: true } },
+              { text: stripMarks(t), options: { fontSize: fs(14), color: hex(c.muted) } },
             ], { ...base, x: x + k * (cw + 0.3), w: cw, y, h: 1.8, fit: "shrink" });
           });
           y += 2; break;
         }
         case "image": break;
         case "divider": slide.addShape("line", { x, y: y + 0.05, w, h: 0, line: { color: hex(c.muted), width: 0.75 } }); y += 0.2; break;
-        case "button": slide.addText(b.label, { ...base, y, w: 2.6, h: 0.55, fontSize: 15, bold: true, color: hex(c.card), fill: { color: hex(c.accent) }, align: "center", valign: "middle", hyperlink: b.href.startsWith("https://") ? { url: b.href } : undefined }); y += 0.7; break;
+        case "button": slide.addText(b.label, { ...base, y, w: 2.6, h: 0.55, fontSize: fs(15), bold: true, color: hex(c.card), fill: { color: hex(c.accent) }, align: "center", valign: "middle", hyperlink: b.href.startsWith("https://") ? { url: b.href } : undefined }); y += 0.7; break;
       }
     };
     card.content.forEach(put);

@@ -35,6 +35,7 @@ function brief(s: GenSettings): string {
   parts.push({ brief: "Keep each card very short: a heading and at most 3 short points.", medium: "Keep each card focused: a heading and 3-5 concise points or a short paragraph.", detailed: "Cards can be fuller: a heading, a short paragraph and supporting points." }[s.amount]);
   if (s.tone) parts.push(`Tone: ${s.tone}.`);
   if (s.audience) parts.push(`Audience: ${s.audience}.`);
+  if (s.designNotes) parts.push(`The user's design notes, to follow literally unless they are impossible: <design_notes>${s.designNotes.replace(/<\/?design_notes>/g, "")}</design_notes>`);
   parts.push(s.format === "document" ? "This is a document read on screen, so sentences can be complete." : "This is a presentation, so favour scannable phrases over full sentences.");
   return parts.join(" ");
 }
