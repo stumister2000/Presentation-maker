@@ -109,7 +109,7 @@ export function useDeckCards(deckId: string, initial: Card[]) {
       return c;
     }),
     setLayout: (id: string, layout: Layout) => ops.updateCard(id, (c) => ({ ...c, layout })),
-    setImage: (id: string, imageUrl: string | null, imageAlt = "") => ops.updateCard(id, (c) => ({ ...c, imageUrl, imageAlt, layout: imageUrl && c.layout === "none" ? "accent_right" : c.layout })),
+    setImage: (id: string, imageUrl: string | null, imageAlt = "", imageCredit = "") => ops.updateCard(id, (c) => ({ ...c, imageUrl, imageAlt, imageCredit, layout: imageUrl && c.layout === "none" ? "accent_right" : c.layout })),
     setNotes: (id: string, notes: string) => ops.updateCard(id, (c) => ({ ...c, notes }), true),
     replaceCards: (edited: Card[]) => update((cs) => cs.map((c) => edited.find((e) => e.id === c.id) ?? c)),
 

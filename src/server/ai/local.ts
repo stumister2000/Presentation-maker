@@ -112,7 +112,7 @@ function cardFromOutline(item: OutlineItem, i: number, total: number, s: GenSett
   if (s.amount === "detailed" && i > 0 && b.length) {
     blocks.push({ id: id(), type: "paragraph", text: `In short: ${b[0].charAt(0).toLowerCase()}${b[0].slice(1)}.` });
   }
-  return { id: id(), layout, imageUrl: null, imageAlt: "", content: blocks, notes: `Talking points for “${item.title}”: ${b.join("; ")}` };
+  return { id: id(), layout, imageUrl: null, imageAlt: "", imageCredit: "", content: blocks, notes: `Talking points for “${item.title}”: ${b.join("; ")}` };
 }
 
 export const localEngine: DeckEngine = {

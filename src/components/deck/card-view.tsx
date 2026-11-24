@@ -103,8 +103,13 @@ export function CardFrame({
 }: { card: Card; theme: DeckTheme; children: React.ReactNode; className?: string; fixedRatio?: boolean }) {
   const img = card.imageUrl ?? (card.layout !== "none" ? accentArt(card.id, theme) : null);
   const media = img && (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={img} alt={card.imageUrl ? card.imageAlt : ""} className="h-full w-full object-cover" />
+    <div className="relative h-full w-full">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={img} alt={card.imageUrl ? card.imageAlt : ""} className="h-full w-full object-cover" />
+      {card.imageUrl && card.imageCredit && (
+        <span className="absolute bottom-1 right-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[10px] leading-tight text-white">{card.imageCredit}</span>
+      )}
+    </div>
   );
   const pad = "p-[6%] sm:p-[5.5%]";
   const content = <div className={cn("flex flex-col gap-[1.1em] justify-center min-w-0", pad)}>{children}</div>;

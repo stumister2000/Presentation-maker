@@ -210,10 +210,10 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
       <ExportModal open={panel === "export"} onClose={() => setPanel(null)} deckId={deck.id} onPptx={() => exportPptx(title, d.cards, theme)} />
       <AnalyticsDrawer open={panel === "analytics"} onClose={() => setPanel(null)} deckId={deck.id} shared={access === "view"} />
       <ImageModal open={!!image} onClose={() => setImage(null)} allowArtwork={!image?.blockId}
-        onPick={(url, alt) => {
+        onPick={(url, alt, credit = "") => {
           if (!image) return;
-          if (image.blockId) { if (url) d.updateBlock(image.cardId, image.blockId, (b) => (b.type === "image" ? { ...b, url, alt } : b)); }
-          else d.setImage(image.cardId, url, alt);
+          if (image.blockId) { if (url) d.updateBlock(image.cardId, image.blockId, (b) => (b.type === "image" ? { ...b, url, alt, credit: credit || undefined } : b)); }
+          else d.setImage(image.cardId, url, alt, credit);
         }} />
       {presenting !== null && <Presenter cards={d.cards} theme={theme} start={presenting} onExit={() => setPresenting(null)} />}
     </div>

@@ -43,6 +43,7 @@ export async function body<T>(req: Request, schema: ZodType<T>): Promise<T> {
 const hits = new Map<string, number[]>();
 /** In-memory sliding window. One instance only; swap for Upstash/Redis when scaling out. */
 export function rateLimit(key: string, max: number, windowMs: number) {
+  max *= Math.max(1, Number(process.env.RATE_LIMIT_MULTIPLIER) || 1); // raised only in tests
   const now = Date.now();
   const arr = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
   if (arr.length >= max) throw new HttpError(429, "Slow down a little and try again in a minute.", "rate_limited");

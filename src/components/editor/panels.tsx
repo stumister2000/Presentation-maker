@@ -159,11 +159,11 @@ export function AnalyticsDrawer({ open, onClose, deckId, shared }: { open: boole
   );
 }
 
-export function ImageModal({ open, onClose, onPick, allowArtwork }: { open: boolean; onClose: () => void; onPick: (url: string | null, alt: string) => void; allowArtwork: boolean }) {
+export function ImageModal({ open, onClose, onPick, allowArtwork }: { open: boolean; onClose: () => void; onPick: (url: string | null, alt: string, credit?: string) => void; allowArtwork: boolean }) {
   const [url, setUrl] = useState("");
   const [alt, setAlt] = useState("");
   const [q, setQ] = useState("");
-  const [results, setResults] = useState<{ url: string; thumb: string; alt: string; credit: string }[] | null>(null);
+  const [results, setResults] = useState<{ url: string; thumb: string; alt: string; credit: string; downloadLocation: string }[] | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const valid = url && isSafeUrl(url) && url.startsWith("https://");
   useEffect(() => { if (open) { setUrl(""); setAlt(""); setResults(null); setSearchError(null); } }, [open]);
@@ -186,7 +186,7 @@ export function ImageModal({ open, onClose, onPick, allowArtwork }: { open: bool
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {results.map((r) => (
               <li key={r.url}>
-                <button type="button" onClick={() => { onPick(r.url, r.alt); onClose(); }} className="block w-full rounded-md overflow-hidden focus-visible:outline-2 focus-visible:outline-focus">
+                <button type="button" onClick={() => { onPick(r.url, r.alt, r.credit); void api("/api/images/use", { json: { downloadLocation: r.downloadLocation } }).catch(() => {}); onClose(); }} className="block w-full rounded-md overflow-hidden focus-visible:outline-2 focus-visible:outline-focus">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={r.thumb} alt={r.alt} className="aspect-[4/3] w-full object-cover" />
                 </button>

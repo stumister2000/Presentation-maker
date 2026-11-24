@@ -74,3 +74,27 @@ export async function requireUser(): Promise<SessionUser> {
   if (!u) throw new HttpError(401, "Sign in to continue.", "unauthenticated");
   return u;
 }
+
+/* ---------- one-time email tokens: verify, magic link, reset ---------- */
+
+export type TokenKind = "magic_link" | "password_reset" | "verify_email";
+const TTL: Record<TokenKind, number> = { magic_link: 15 * 60e3, password_reset: 60 * 60e3, verify_email: 24 * 3600e3 };
+
+export async function issueToken(userId: string, kind: TokenKind): Promise<string> {
+  const token = randomToken();
+  await q`insert into email_tokens (user_id, kind, token_hash, expires_at) values (${userId}, ${kind}, ${sha256(token)}, ${new Date(Date.now() + TTL[kind])})`;
+  return token;
+}
+
+/** Marks a token used and returns its user, or null if unknown, expired or already used. */
+export async function consumeToken(token: string, kind: TokenKind): Promise<string | null> {
+  const rows = await q<{ user_id: string }>`
+    update email_tokens set used_at = now()
+    where token_hash = ${sha256(token)} and kind = ${kind} and used_at is null and expires_at > now()
+    returning user_id`;
+  return rows[0]?.user_id ?? null;
+}
+
+export async function endAllSessions(userId: string): Promise<void> {
+  await q`delete from sessions where user_id = ${userId}`;
+}

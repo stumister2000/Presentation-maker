@@ -45,6 +45,7 @@ function cardFromRow(r: Record<string, unknown>): Card {
     layout: r.layout,
     imageUrl: r.image_url,
     imageAlt: r.image_alt,
+    imageCredit: r.image_credit ?? "",
     content: typeof r.content === "string" ? JSON.parse(r.content) : r.content,
     notes: r.notes,
   })!;
@@ -172,8 +173,8 @@ export async function getPublicDeck(slug: string): Promise<(Deck & { ownerPlan: 
 async function insertCards(t: Q, deckId: string, cards: Card[]) {
   let i = 0;
   for (const c of cards) {
-    await t`insert into cards (deck_id, position, layout, image_url, image_alt, content, notes)
-      values (${deckId}, ${i++}, ${c.layout}, ${c.imageUrl}, ${c.imageAlt}, ${c.content}, ${c.notes})`;
+    await t`insert into cards (deck_id, position, layout, image_url, image_alt, image_credit, content, notes)
+      values (${deckId}, ${i++}, ${c.layout}, ${c.imageUrl}, ${c.imageAlt}, ${c.imageCredit}, ${c.content}, ${c.notes})`;
   }
 }
 
@@ -199,8 +200,8 @@ export async function appendCard(userId: string, deckId: string, card: Card) {
     const own = await t`select id from decks where id = ${deckId} and user_id = ${userId}`;
     if (!own.length) throw new HttpError(404, "Not found.");
     const [{ n }] = await t<{ n: number }>`select count(*)::int as n from cards where deck_id = ${deckId}`;
-    await t`insert into cards (deck_id, position, layout, image_url, image_alt, content, notes)
-      values (${deckId}, ${n}, ${card.layout}, ${card.imageUrl}, ${card.imageAlt}, ${card.content}, ${card.notes})`;
+    await t`insert into cards (deck_id, position, layout, image_url, image_alt, image_credit, content, notes)
+      values (${deckId}, ${n}, ${card.layout}, ${card.imageUrl}, ${card.imageAlt}, ${card.imageCredit}, ${card.content}, ${card.notes})`;
   });
 }
 

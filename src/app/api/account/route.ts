@@ -2,6 +2,7 @@ import { z } from "zod";
 import { route, body } from "@/server/http";
 import { requireUser, endSession } from "@/server/auth";
 import { deleteUser, updateUserName } from "@/server/queries";
+import { cancelAll } from "@/server/billing";
 
 export const PATCH = route(async (req) => {
   const u = await requireUser();
@@ -13,6 +14,6 @@ export const PATCH = route(async (req) => {
 export const DELETE = route(async (req) => {
   const u = await requireUser();
   const { confirm } = await body(req, z.object({ confirm: z.literal("DELETE") }));
-  if (confirm) { await endSession(); await deleteUser(u.id); }
+  if (confirm) { await cancelAll(u.id); await endSession(); await deleteUser(u.id); }
   return null;
 });

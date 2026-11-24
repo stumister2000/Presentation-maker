@@ -1,20 +1,20 @@
 feature,area,priority,original,clone,notes
 Sign up and log in with email,auth,must,yes,yes,email + password; sessions in DB
-Sign in with Google,auth,should,yes,no,
+Sign in with Google,auth,should,yes,yes,"own OAuth client, openid email profile scopes"
 Dashboard lists my presentations,dashboard,must,yes,yes,"search, previews in theme"
 Empty state on first run with Create new,dashboard,must,yes,yes,S03 empty
 Create picker (generate / paste / import),create,must,yes,yes,plus templates
-Generate from a one-line prompt,create,must,yes,partial,offline drafting engine until the Claude engine lands in backend
+Generate from a one-line prompt,create,must,yes,yes,Claude engine (claude-opus-5-5); offline drafting when no key
 Choose number of cards,create,must,yes,yes,capped by plan
-Choose output language,create,should,yes,partial,setting stored and sent; offline engine writes English
+Choose output language,create,should,yes,yes,Claude engine writes in the chosen language
 Choose format presentation or document,create,should,yes,partial,format stored; both render as cards
 Paste in text to make a deck,create,must,yes,yes,--- and headings split cards
 Text mode generate / condense / preserve,create,should,yes,yes,
 Editable outline before generating,outline,must,yes,yes,S08
 Reorder add and delete outline cards,outline,must,yes,yes,"buttons, keyboard reachable"
-Text amount tone and audience settings,outline,should,yes,partial,amount applied offline; tone/audience need the AI engine
+Text amount tone and audience settings,outline,should,yes,yes,sent to the Claude engine
 Pick theme before generating,outline,must,yes,yes,6 original themes
-Pick image source (AI / stock / none),outline,should,yes,partial,artwork + none work; photo search needs Unsplash key
+Pick image source (AI / stock / none),outline,should,yes,partial,stock photos (Unsplash) + theme artwork + none; no AI-generated images
 Cards stream in while generating,generate,must,yes,yes,NDJSON stream
 Credits shown and deducted per generation,billing,must,yes,yes,"charged in DB transaction, refunded on failure"
 Card editor with inline rich text,editor,must,yes,yes,"**bold** *italic* [links], Ctrl+B/I"
@@ -32,7 +32,7 @@ Tables and charts,editor,could,yes,no,
 Video and web embeds,editor,could,yes,no,
 Switch theme live,themes,must,yes,yes,F05
 Custom theme (fonts colours logo),themes,should,yes,no,
-AI edit a card or whole deck by chat,ai,must,yes,partial,UI + credits done; offline engine is rule-based
+AI edit a card or whole deck by chat,ai,must,yes,yes,"Claude engine, verified against a mock API"
 AI generate an image for a card,ai,should,yes,no,
 Present mode fullscreen with keyboard nav,present,must,yes,yes,F06
 Presenter view with notes,present,could,yes,yes,N toggles notes panel
@@ -50,7 +50,7 @@ Rename duplicate favourite trash restore,dashboard,should,yes,yes,F10
 Folders,dashboard,could,yes,no,
 Templates gallery,templates,should,yes,yes,4 original templates
 Import pptx / docx / pdf / URL,create,could,yes,partial,.txt and .md only
-Paid plans with Stripe and credit top-ups,billing,must,yes,no,F11
+Paid plans with Stripe and credit top-ups,billing,must,yes,partial,subscriptions + portal + webhooks (test mode); one-off credit packs not built
 Remove watermark on paid plans,billing,should,yes,yes,badge on free plan's shared decks
 Comments on cards,collab,could,yes,no,
 Realtime multiplayer editing,collab,could,yes,no,deferred

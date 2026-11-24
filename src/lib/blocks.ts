@@ -31,6 +31,7 @@ export const CardSchema = z.object({
   layout: z.enum(LAYOUTS),
   imageUrl: z.string().max(2000).nullable(),
   imageAlt: z.string().max(400),
+  imageCredit: z.string().max(200),
   content: z.array(BlockSchema).max(40),
   notes: z.string().max(8000),
 });
@@ -64,6 +65,7 @@ export function blankCard(title = ""): Card {
     layout: "none",
     imageUrl: null,
     imageAlt: "",
+    imageCredit: "",
     content: [{ id: newId(), type: "heading", level: 1, text: title }, { id: newId(), type: "paragraph", text: "" }],
     notes: "",
   };
@@ -87,6 +89,7 @@ export function sanitizeCard(raw: unknown): Card | null {
     layout,
     imageUrl,
     imageAlt: typeof r.imageAlt === "string" ? r.imageAlt.slice(0, 400) : "",
+    imageCredit: typeof r.imageCredit === "string" ? r.imageCredit.slice(0, 200) : "",
     content: blocks.slice(0, 40),
     notes: typeof r.notes === "string" ? r.notes.slice(0, 8000) : "",
   };

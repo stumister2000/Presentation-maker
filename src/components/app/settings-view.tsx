@@ -68,6 +68,12 @@ export function SettingsView({ user }: { user: SessionUser }) {
         </ul>
       </section>
 
+      <section aria-labelledby="sessions-h" className="rounded-lg border border-border p-5">
+        <h2 id="sessions-h" className="font-semibold">Signed-in devices</h2>
+        <p className="text-sm text-text-muted mt-1 mb-3">Lost a laptop or used a shared computer? Sign out of every device at once.</p>
+        <Button onClick={async () => { await api("/api/auth/logout-all", { method: "POST" }); router.replace("/login"); router.refresh(); }}>Sign out everywhere</Button>
+      </section>
+
       <section aria-labelledby="danger-h" className="rounded-lg border border-border p-5">
         <h2 id="danger-h" className="font-semibold">Delete account</h2>
         <p className="text-sm text-text-muted mt-1 mb-3">Removes your account, every deck and all analytics. This cannot be undone.</p>

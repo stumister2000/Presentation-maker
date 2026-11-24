@@ -8,7 +8,7 @@ const ul = (...items: string[]): Block => ({ id: newId(), type: "bullets", items
 const ol = (...items: string[]): Block => ({ id: newId(), type: "numbered", items });
 const cols = (...c: Array<[string, string]>): Block => ({ id: newId(), type: "columns", columns: c.map(([title, text]) => ({ title, text })) });
 const stats = (...s: Array<[string, string]>): Block => ({ id: newId(), type: "stats", items: s.map(([value, label]) => ({ value, label })) });
-const card = (layout: Layout, ...content: Block[]): Card => ({ id: newId(), layout, imageUrl: null, imageAlt: "", content, notes: "" });
+const card = (layout: Layout, ...content: Block[]): Card => ({ id: newId(), layout, imageUrl: null, imageAlt: "", imageCredit: "", content, notes: "" });
 
 export interface Template { key: string; name: string; blurb: string; themeId: string; cards: () => Card[] }
 

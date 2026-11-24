@@ -18,6 +18,7 @@ const sample: Card = {
   layout: "accent_right",
   imageUrl: null,
   imageAlt: "",
+  imageCredit: "",
   notes: "",
   content: [
     { id: "a", type: "heading", level: 1, text: "Ship the **quarterly** plan" },

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { route, body, rateLimit } from "@/server/http";
-import { hashPassword, startSession } from "@/server/auth";
+import { hashPassword, issueToken, startSession } from "@/server/auth";
+import { appUrl, emails, sendEmail } from "@/server/email";
 import { createUser } from "@/server/queries";
 
 const Schema = z.object({
@@ -14,5 +15,8 @@ export const POST = route(async (req) => {
   const { email, password, name } = await body(req, Schema);
   const id = await createUser(email, name, await hashPassword(password));
   await startSession(id);
+  const token = await issueToken(id, "verify_email");
+  // do not fail sign-up if the email provider hiccups; they can request another link later
+  await sendEmail({ to: email, ...emails.verify(`${appUrl()}/auth/verify?kind=verify&token=${token}`) }).catch((e) => console.error("verify email failed", String(e)));
   return { id };
 });
