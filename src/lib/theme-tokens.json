@@ -1,0 +1,44 @@
+{
+  "paper": {
+    "page": "#f3efe7",
+    "card": "#fffdf8",
+    "text": "#2b2620",
+    "muted": "#6b6156",
+    "accent": "#9c3d1c"
+  },
+  "ink": {
+    "page": "#0b1020",
+    "card": "#141a2e",
+    "text": "#eef1fb",
+    "muted": "#a7afc8",
+    "accent": "#8fb3ff"
+  },
+  "meadow": {
+    "page": "#e8f0e6",
+    "card": "#fbfdf9",
+    "text": "#1c2b1f",
+    "muted": "#4f6352",
+    "accent": "#2f6b3a"
+  },
+  "ember": {
+    "page": "#2a1410",
+    "card": "#3a1d17",
+    "text": "#fff1ea",
+    "muted": "#e5b9a8",
+    "accent": "#ffb08a"
+  },
+  "slate": {
+    "page": "#e9ecf1",
+    "card": "#ffffff",
+    "text": "#101828",
+    "muted": "#4a5568",
+    "accent": "#2556c4"
+  },
+  "mono": {
+    "page": "#000000",
+    "card": "#0d0d0d",
+    "text": "#ffffff",
+    "muted": "#b5b5b5",
+    "accent": "#ffd84d"
+  }
+}

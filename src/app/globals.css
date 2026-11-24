@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@layer base {
+  html { color-scheme: light; }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  ::selection { background: var(--color-accent-soft); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+.skeleton {
+  background: linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface-2) 50%, var(--color-surface) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.animate-rise { animation: rise var(--motion-base) var(--ease-snappy) both; }
+
+/* Deck rendering: every deck theme sets these variables on .deck-root */
+.deck-root {
+  --deck-heading-font: var(--font-serif);
+  --deck-body-font: var(--font-sans);
+  background: var(--deck-page);
+  color: var(--deck-text);
+}
+.deck-card {
+  background: var(--deck-card);
+  color: var(--deck-text);
+  font-family: var(--deck-body-font);
+  box-shadow: var(--shadow-slide);
+  border-radius: var(--radius-lg);
+}
+.deck-card :is(h1, h2, h3) { font-family: var(--deck-heading-font); color: var(--deck-text); letter-spacing: -0.01em; }
+.deck-card .deck-muted { color: var(--deck-muted); }
+.deck-card .deck-accent { color: var(--deck-accent); }
+.deck-card a { color: var(--deck-accent); text-decoration: underline; text-underline-offset: 2px; }
+.deck-card [contenteditable]:empty::before { content: attr(data-placeholder); color: var(--deck-muted); opacity: .7; pointer-events: none; }
+.deck-card [contenteditable]:focus { outline: none; }
+
+@media print {
+  @page { size: 1280px 720px; margin: 0; }
+  .no-print { display: none !important; }
+  .print-card { break-after: page; box-shadow: none !important; border-radius: 0 !important; }
+  body { background: white; }
+}

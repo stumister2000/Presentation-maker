@@ -1,0 +1,63 @@
+feature,area,priority,original,clone,notes
+Sign up and log in with email,auth,must,yes,no,magic link or password
+Sign in with Google,auth,should,yes,no,
+Dashboard lists my presentations,dashboard,must,yes,no,S03
+Empty state on first run with Create new,dashboard,must,yes,no,S03 empty
+Create picker (generate / paste / import),create,must,yes,no,S04
+Generate from a one-line prompt,create,must,yes,no,F01 core loop
+Choose number of cards,create,must,yes,no,
+Choose output language,create,should,yes,no,
+Choose format presentation or document,create,should,yes,no,webpage/social are could
+Paste in text to make a deck,create,must,yes,no,F02
+Text mode generate / condense / preserve,create,should,yes,no,
+Editable outline before generating,outline,must,yes,no,S08
+Reorder add and delete outline cards,outline,must,yes,no,
+Text amount tone and audience settings,outline,should,yes,no,
+Pick theme before generating,outline,must,yes,no,
+Pick image source (AI / stock / none),outline,should,yes,no,
+Cards stream in while generating,generate,must,yes,no,S09
+Credits shown and deducted per generation,billing,must,yes,no,
+Card editor with inline rich text,editor,must,yes,no,S10
+Insert blocks via + and slash menu,editor,must,yes,no,S11
+Bullets numbered quote callout blocks,editor,must,yes,no,
+Columns and smart layouts,editor,should,yes,no,
+Images in cards (accent image),editor,must,yes,no,
+Card layouts (accent left right top background),editor,must,yes,no,S12
+Thumbnail rail with drag reorder,editor,must,yes,no,
+Duplicate and delete cards,editor,must,yes,no,
+Undo and redo,editor,must,yes,no,
+Autosave,editor,must,yes,no,
+Speaker notes,editor,should,yes,no,
+Tables and charts,editor,could,yes,no,
+Video and web embeds,editor,could,yes,no,
+Switch theme live,themes,must,yes,no,F05
+Custom theme (fonts colours logo),themes,should,yes,no,
+AI edit a card or whole deck by chat,ai,must,yes,no,S14
+AI generate an image for a card,ai,should,yes,no,
+Present mode fullscreen with keyboard nav,present,must,yes,no,F06
+Presenter view with notes,present,could,yes,no,
+Share link with access level,sharing,must,yes,no,F07
+Public read-only view for guests,sharing,must,yes,no,S18
+Invite collaborators by email,sharing,should,yes,no,
+Embed code,sharing,could,yes,no,
+Password protect a link,sharing,could,yes,no,paid
+Export to PDF,export,must,yes,no,
+Export to PPTX,export,should,yes,no,
+Export to PNG,export,could,yes,no,
+View analytics per presentation,analytics,should,yes,no,S19
+Per-card engagement analytics,analytics,could,yes,no,
+Rename duplicate favourite trash restore,dashboard,should,yes,no,F10
+Folders,dashboard,could,yes,no,
+Templates gallery,templates,should,yes,no,S20
+Import pptx / docx / pdf / URL,create,could,yes,no,S07
+Paid plans with Stripe and credit top-ups,billing,must,yes,no,F11
+Remove watermark on paid plans,billing,should,yes,no,
+Comments on cards,collab,could,yes,no,
+Realtime multiplayer editing,collab,could,yes,no,deferred
+Version history,editor,could,yes,no,
+Public developer API,api,could,yes,no,
+Gamma's own themes and template designs,themes,could,yes,skip,their design work; we make our own
+Licensed image model / stock partners,ai,could,yes,skip,use our own providers under their terms
+Public gallery and user network,growth,could,yes,skip,the network is not rebuildable
+Google Slides / Canva partner export,export,could,yes,skip,partner deals
+Custom domains for published sites at scale,sharing,could,yes,skip,basic version later if needed
