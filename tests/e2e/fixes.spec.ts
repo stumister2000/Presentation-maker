@@ -9,10 +9,10 @@ test("X1-H1 out of credits: build the deck from my outline, free, nothing lost",
   await page.goto("/create/generate");
   await page.getByRole("textbox", { name: "Describe your deck" }).fill("My big idea");
   await page.getByRole("button", { name: "Draft outline" }).click();
-  await expect(page.getByRole("button", { name: "Generate deck" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Make my deck" })).toBeEnabled();
   await page.getByLabel("Card 1 title").fill("My own title, kept exactly");
-  await page.getByRole("button", { name: "Generate deck" }).click();
-  const dialog = page.getByRole("dialog", { name: "You need a few more credits" });
+  await page.getByRole("button", { name: "Make my deck" }).click();
+  const dialog = page.getByRole("dialog", { name: "Not enough credits for AI writing" });
   await expect(dialog).toBeVisible();
   await a11y(page);
   await dialog.getByRole("button", { name: "Build from my outline, free" }).click();

@@ -38,8 +38,8 @@ export async function createDeckUi(page: Page, prompt = "A kickoff deck for a co
   await page.getByLabel("Number of cards").selectOption(String(cards));
   await page.getByRole("textbox", { name: "Describe your deck" }).fill(prompt);
   await page.getByRole("button", { name: "Draft outline" }).click();
-  await expect(page.getByRole("button", { name: "Generate deck" })).toBeEnabled();
-  await page.getByRole("button", { name: "Generate deck" }).click();
+  await expect(page.getByRole("button", { name: "Make my deck" })).toBeEnabled();
+  await page.getByRole("button", { name: "Make my deck" }).click();
   await page.waitForURL(/\/decks\/[0-9a-f-]{36}/);
   await expect(page.getByRole("region", { name: "Card 1", exact: true })).toBeVisible();
   return page.url().split("/decks/")[1].split("?")[0];

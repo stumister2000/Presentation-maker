@@ -22,7 +22,7 @@ export function errorResponse(e: unknown): Response {
   if (e instanceof HttpError) return NextResponse.json({ error: e.message, code: e.code }, { status: e.status });
   if (e instanceof ZodError) return NextResponse.json({ error: "Some fields are not valid.", issues: e.issues.slice(0, 5) }, { status: 400 });
   console.error(e);
-  return NextResponse.json({ error: "Something went wrong on our side." }, { status: 500 });
+  return NextResponse.json({ error: "That broke on our side, not yours. Try again in a moment." }, { status: 500 });
 }
 
 function assertSameOrigin(req: Request) {

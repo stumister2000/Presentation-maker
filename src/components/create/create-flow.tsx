@@ -179,7 +179,7 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
             <div className="rounded-lg bg-surface p-4 flex flex-col gap-3">
               <div className="flex items-center justify-between text-sm"><span>{outline.length} cards</span><span className="flex items-center gap-1.5">Uses {cost} of <CreditsMeter credits={credits} /></span></div>
               {error && <p role="alert" className="text-sm text-danger">{error}</p>}
-              <Button variant="primary" size="lg" disabled={streaming || !outline.length} onClick={() => generate()}><Sparkles size={18} />Generate deck</Button>
+              <Button variant="primary" size="lg" disabled={streaming || !outline.length} onClick={() => generate()}><Sparkles size={18} />Make my deck</Button>
             </div>
           </aside>
         </div>
@@ -194,7 +194,7 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
       <Link href="/create" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text mb-6"><ArrowLeft size={16} />All options</Link>
       {welcome && <p className="mb-4 rounded-md bg-accent-soft text-accent px-4 py-3 text-sm font-medium">Welcome! You have {credits} credits. Your first deck takes about a minute.</p>}
       <h1 className="text-xl sm:text-[1.75rem] font-bold text-center">
-        {mode === "generate" ? "What do you want to make?" : mode === "paste" ? "Paste your notes" : "Import a file"}
+        {mode === "generate" ? "What are we making?" : mode === "paste" ? "Paste your notes" : "Import a file"}
       </h1>
       <p className="text-text-muted text-center mt-1 mb-6">
         {mode === "generate" ? "One sentence is enough. You will review the outline before anything is designed."
@@ -261,7 +261,7 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
 
 function OutOfCredits({ open, onClose, need, have, onFree }: { open: boolean; onClose: () => void; need: number; have: number; onFree: () => void }) {
   return (
-    <Modal open={open} onClose={onClose} title="You need a few more credits" size="sm"
+    <Modal open={open} onClose={onClose} title="Not enough credits for AI writing" size="sm"
       footer={<><Link href="/settings#plans" className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface">See plans</Link><Button variant="primary" onClick={onFree}>Build from my outline, free</Button></>}>
       <p className="text-sm text-text-muted">AI writing for this deck needs {need} credits and you have {have}.</p>
       <p className="text-sm text-text-muted mt-2">You can still make it: we lay out your outline as it is, with your theme, at no cost. Nothing you wrote is lost.</p>

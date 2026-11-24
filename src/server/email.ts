@@ -24,7 +24,7 @@ export async function sendEmail(m: Mail): Promise<void> {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "content-type": "application/json" },
-    body: JSON.stringify({ from: process.env.EMAIL_FROM ?? `${APP_NAME} <hello@example.com>`, to: [m.to], subject: m.subject, text: m.text, html: m.html ?? textToHtml(m.text) }),
+    body: JSON.stringify({ from: process.env.EMAIL_FROM ?? `${APP_NAME} <hello@fairdeck.example>`, to: [m.to], subject: m.subject, text: m.text, html: m.html ?? textToHtml(m.text) }),
     signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) throw new Error(`email provider returned ${res.status}`);

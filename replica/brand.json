@@ -1,0 +1,17 @@
+{
+  "name": "Fairdeck",
+  "avoid": [
+    "Gamma",
+    "Gamma Tech",
+    "gamma.app"
+  ],
+  "domains": [
+    "gamma.app"
+  ],
+  "colors": [
+    "#3b4cca",
+    "#3240ab",
+    "#eceefc"
+  ],
+  "_notes": "colors = the clone's old placeholder accent (must not survive). Add the original's exact brand hexes after checking its site by hand; they could not be read in the session that wrote this file."
+}

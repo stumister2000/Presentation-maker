@@ -7,14 +7,14 @@
   --color-border-input: #85858f;
   --color-text: #17171c;
   --color-text-muted: #5c5c68;
-  --color-accent: #3b4cca;
-  --color-accent-hover: #3240ab;
-  --color-accent-soft: #eceefc;
+  --color-accent: #0b6e64;
+  --color-accent-hover: #085a52;
+  --color-accent-soft: #e4f3f0;
   --color-on-accent: #ffffff;
   --color-danger: #c22f2f;
   --color-success: #1e7a4c;
   --color-warning: #8a5a00;
-  --color-focus: #3b4cca;
+  --color-focus: #0b6e64;
   --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Fraunces Variable', 'Source Serif 4 Variable', Georgia, serif;
   --font-grotesk: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
