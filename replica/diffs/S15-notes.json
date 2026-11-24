@@ -1,0 +1,32 @@
+{
+  "mode": "layout",
+  "original": {
+    "width": 1440,
+    "height": 900
+  },
+  "clone": {
+    "width": 1440,
+    "height": 900
+  },
+  "compared_at": {
+    "width": 480,
+    "height": 300
+  },
+  "height_delta_pct": 0.0,
+  "score": 97.8,
+  "verdict": "matches",
+  "regions": [
+    {
+      "x": 120,
+      "y": 840,
+      "w": 120,
+      "h": 60,
+      "cells": 1,
+      "where": "bottom left"
+    }
+  ],
+  "files": {
+    "original": "/tmp/claude-0/-home-user-Presentation-maker/239fb047-1179-5cfc-98a3-bdadd9b75435/scratchpad/old-S15-notes.png",
+    "clone": "replica/clone-screens/S15-notes.png"
+  }
+}

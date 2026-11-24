@@ -8,7 +8,7 @@ import { Segmented } from "@/components/ui/segmented";
 import { Modal } from "@/components/ui/modal";
 import { CreditsMeter } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/toast";
-import { PLANS } from "@/lib/plans";
+import { PLANS, CREDIT_PACK_INFO } from "@/lib/plans";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import type { SessionUser } from "@/server/auth";
@@ -66,6 +66,13 @@ export function SettingsView({ user }: { user: SessionUser }) {
             );
           })}
         </ul>
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg border border-border p-4">
+          <div className="flex-1 min-w-48">
+            <div className="font-semibold">Need a few more credits?</div>
+            <p className="text-sm text-text-muted">{CREDIT_PACK_INFO.credits} credits for ${CREDIT_PACK_INFO.price}, on any plan. They never expire.</p>
+          </div>
+          <Button loading={busy === "credits"} onClick={() => checkout("credits")}>Buy {CREDIT_PACK_INFO.credits} credits</Button>
+        </div>
       </section>
 
       <section aria-labelledby="sessions-h" className="rounded-lg border border-border p-5">

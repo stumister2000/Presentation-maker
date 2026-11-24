@@ -1,0 +1,23 @@
+{
+  "mode": "layout",
+  "original": {
+    "width": 1440,
+    "height": 900
+  },
+  "clone": {
+    "width": 1440,
+    "height": 900
+  },
+  "compared_at": {
+    "width": 480,
+    "height": 300
+  },
+  "height_delta_pct": 0.0,
+  "score": 100.0,
+  "verdict": "matches",
+  "regions": [],
+  "files": {
+    "original": "/tmp/claude-0/-home-user-Presentation-maker/239fb047-1179-5cfc-98a3-bdadd9b75435/scratchpad/old-S05.png",
+    "clone": "replica/clone-screens/S05.png"
+  }
+}

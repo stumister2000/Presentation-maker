@@ -259,7 +259,7 @@ function OutOfCredits({ open, onClose, need, have }: { open: boolean; onClose: (
   return (
     <Modal open={open} onClose={onClose} title="You need a few more credits" size="sm"
       footer={<><Button onClick={onClose}>Not now</Button><Link href="/settings#plans" className="inline-flex h-10 items-center rounded-md bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover">See plans</Link></>}>
-      <p className="text-sm text-text-muted">This deck needs {need} credits and you have {have}. Try fewer cards, or upgrade for a monthly allowance.</p>
+      <p className="text-sm text-text-muted">This deck needs {need} credits and you have {have}. Try fewer cards, buy a one-off pack of 500, or upgrade for a monthly allowance.</p>
     </Modal>
   );
 }

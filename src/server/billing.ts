@@ -21,6 +21,10 @@ const PRICE_ENV: Record<"plus" | "pro", Record<Period, string>> = {
 };
 export const priceId = (plan: "plus" | "pro", period: Period) => process.env[PRICE_ENV[plan][period]] ?? null;
 
+/** One-off credit pack (Stripe one-time price). */
+export const CREDIT_PACK = { credits: 500, priceEnv: "STRIPE_PRICE_CREDITS_500" } as const;
+export const packPriceId = () => process.env[CREDIT_PACK.priceEnv] ?? null;
+
 function planForPrice(id: string | undefined): { plan: "plus" | "pro"; period: Period } | null {
   for (const plan of ["plus", "pro"] as const) for (const period of ["monthly", "yearly"] as const) if (id && priceId(plan, period) === id) return { plan, period };
   return null;
@@ -67,9 +71,11 @@ export async function handleEvent(s: Stripe, event: Stripe.Event): Promise<boole
   // fetch anything we need from Stripe before opening the transaction
   let sub: Stripe.Subscription | null = null;
   let invoiceUser: { userId: string; email: string | null } | null = null;
+  let packFor: string | null = null;
   if (event.type === "checkout.session.completed") {
     const cs = event.data.object;
     if (cs.mode === "subscription" && typeof cs.subscription === "string") sub = await s.subscriptions.retrieve(cs.subscription);
+    if (cs.mode === "payment" && cs.payment_status === "paid" && cs.metadata?.kind === "credit_pack" && cs.metadata.userId) packFor = cs.metadata.userId;
   } else if (event.type.startsWith("customer.subscription.")) {
     sub = event.data.object as Stripe.Subscription;
   } else if (event.type === "invoice.paid" || event.type === "invoice.payment_failed") {
@@ -83,6 +89,12 @@ export async function handleEvent(s: Stripe, event: Stripe.Event): Promise<boole
     const fresh = await t`insert into stripe_events (id, type) values (${event.id}, ${event.type}) on conflict do nothing returning id`;
     if (!fresh.length) return false;
     if (sub) await syncSubscription(t, sub);
+    if (packFor) {
+      const ref = (event.data.object as Stripe.Checkout.Session).id;
+      const rows = await t`insert into credit_ledger (user_id, delta, reason, ref_id) values (${packFor}, ${CREDIT_PACK.credits}, 'purchase', ${ref})
+        on conflict do nothing returning id`;
+      if (rows.length) await t`update users set credits = credits + ${CREDIT_PACK.credits} where id = ${packFor}`;
+    }
     if (event.type === "invoice.paid" && sub && invoiceUser) {
       const mapped = planForPrice(sub.items.data[0]?.price.id);
       if (mapped) await grantPlanCredits(t, invoiceUser.userId, mapped.plan, mapped.period, (event.data.object as Stripe.Invoice).id ?? event.id);

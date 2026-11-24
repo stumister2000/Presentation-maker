@@ -1,0 +1,40 @@
+{
+  "mode": "layout",
+  "original": {
+    "width": 1440,
+    "height": 900
+  },
+  "clone": {
+    "width": 1440,
+    "height": 900
+  },
+  "compared_at": {
+    "width": 480,
+    "height": 300
+  },
+  "height_delta_pct": 0.0,
+  "score": 79.7,
+  "verdict": "close",
+  "regions": [
+    {
+      "x": 960,
+      "y": 360,
+      "w": 360,
+      "h": 360,
+      "cells": 5,
+      "where": "middle right"
+    },
+    {
+      "x": 840,
+      "y": 120,
+      "w": 360,
+      "h": 120,
+      "cells": 3,
+      "where": "top right"
+    }
+  ],
+  "files": {
+    "original": "/tmp/claude-0/-home-user-Presentation-maker/239fb047-1179-5cfc-98a3-bdadd9b75435/scratchpad/old-S10.png",
+    "clone": "replica/clone-screens/S10.png"
+  }
+}

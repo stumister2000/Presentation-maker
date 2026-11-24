@@ -155,6 +155,18 @@ test.describe("stripe webhooks", () => {
     items: { data: [{ price: { id: price }, current_period_end: Math.floor(Date.now() / 1000) + 30 * 86400 }] },
   });
 
+  test("a paid credit pack adds 500 credits exactly once", async ({ baseURL }) => {
+    const user = await pwRequest.newContext({ baseURL });
+    await signUpApi(user);
+    const me = await (await user.get("/api/auth/me")).json();
+    const hook = await pwRequest.newContext({ baseURL });
+    const session = { id: `cs_${me.id.slice(0, 8)}`, object: "checkout.session", mode: "payment", payment_status: "paid", metadata: { userId: me.id, kind: "credit_pack" } };
+    await send(hook, { id: `evt_pack1_${me.id}`, object: "event", type: "checkout.session.completed", data: { object: session } });
+    expect((await (await user.get("/api/auth/me")).json()).credits).toBe(900);
+    await send(hook, { id: `evt_pack2_${me.id}`, object: "event", type: "checkout.session.completed", data: { object: session } });
+    expect((await (await user.get("/api/auth/me")).json()).credits).toBe(900);
+  });
+
   test("bad signatures are rejected", async ({ baseURL }) => {
     const anon = await pwRequest.newContext({ baseURL });
     const res = await anon.post("/api/webhooks/stripe", { data: "{}", headers: { "stripe-signature": "t=1,v1=bad" } });

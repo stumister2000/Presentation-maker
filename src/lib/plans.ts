@@ -2,6 +2,8 @@
 // Server-side limits live in src/server/queries.ts (PLAN_LIMITS).
 export interface PlanInfo { key: "free" | "plus" | "pro"; name: string; monthly: number; yearlyPerMonth: number; credits: string; features: string[] }
 
+export const CREDIT_PACK_INFO = { credits: 500, price: 5 };
+
 export const PLANS: PlanInfo[] = [
   { key: "free", name: "Free", monthly: 0, yearlyPerMonth: 0, credits: "400 credits to start",
     features: ["Up to 10 cards per generation", "All themes and templates", "Share links and PDF export", "Small “Made with” badge on shared decks"] },

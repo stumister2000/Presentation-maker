@@ -50,7 +50,7 @@ Rename duplicate favourite trash restore,dashboard,should,yes,yes,F10
 Folders,dashboard,could,yes,no,
 Templates gallery,templates,should,yes,yes,4 original templates
 Import pptx / docx / pdf / URL,create,could,yes,partial,.txt and .md only
-Paid plans with Stripe and credit top-ups,billing,must,yes,partial,subscriptions + portal + webhooks (test mode); one-off credit packs not built
+Paid plans with Stripe and credit top-ups,billing,must,yes,yes,"subscriptions, portal, one-off 500-credit pack, signed idempotent webhooks (test mode)"
 Remove watermark on paid plans,billing,should,yes,yes,badge on free plan's shared decks
 Comments on cards,collab,could,yes,no,
 Realtime multiplayer editing,collab,could,yes,no,deferred
