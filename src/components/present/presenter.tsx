@@ -59,7 +59,7 @@ export function Presenter({ cards, theme, start = 0, onExit, showNotes: allowNot
           </aside>
         )}
       </div>
-      <div className="flex items-center gap-1 px-3 py-2 text-[var(--deck-text)] opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity">
+      <div className="flex items-center gap-1 px-3 py-2 text-[var(--deck-text)]">
         <PBtn label="Exit (Esc)" onClick={onExit}><X size={18} /></PBtn>
         <PBtn label="Previous" onClick={() => go(i - 1)} disabled={i === 0}><ChevronLeft size={18} /></PBtn>
         <span className="text-sm tabular-nums px-1" aria-live="polite">{i + 1} / {cards.length}</span>

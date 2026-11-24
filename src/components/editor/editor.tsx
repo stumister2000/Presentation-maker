@@ -86,8 +86,8 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
     setTimeout(() => scrollTo(c.id), 50);
   }
 
-  const saveLabel = { saved: "Saved", saving: "Saving…", unsaved: "Editing…", error: "Offline. Retrying…" }[d.save];
-  const SaveIcon = { saved: Check, saving: Loader2, unsaved: Loader2, error: CloudOff }[d.save];
+  const saveLabel = { saved: "Saved", saving: "Saving…", unsaved: "Editing…", error: "Offline. Retrying…", signedOut: "Signed out. Changes not saved" }[d.save];
+  const SaveIcon = { saved: Check, saving: Loader2, unsaved: Loader2, error: CloudOff, signedOut: CloudOff }[d.save];
 
   return (
     <div className="min-h-dvh flex flex-col bg-surface">
@@ -104,9 +104,13 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
           onBlur={() => { const t = title.trim() || "Untitled"; setTitle(t); if (t !== deck.title) void patch({ title: t }); }}
           onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
           className="min-w-0 flex-1 sm:flex-none sm:w-72 truncate rounded-md px-2 h-9 font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-focus" />
-        <span className={cn("hidden sm:inline-flex items-center gap-1 text-xs", d.save === "error" ? "text-danger" : "text-text-muted")} role="status" aria-live="polite" data-testid="save-state">
-          <SaveIcon size={13} className={d.save === "saving" ? "animate-spin" : undefined} aria-hidden="true" />{saveLabel}
+        <span className={cn("inline-flex items-center gap-1 text-xs shrink-0", d.save === "error" || d.save === "signedOut" ? "text-danger" : "text-text-muted")} role="status" aria-live="polite" data-testid="save-state">
+          <SaveIcon size={13} className={d.save === "saving" ? "animate-spin" : undefined} aria-hidden="true" />
+          <span className={d.save === "saved" || d.save === "saving" || d.save === "unsaved" ? "sr-only sm:not-sr-only" : undefined}>{saveLabel}</span>
         </span>
+        {d.save === "signedOut" && (
+          <a href={`/login?next=/decks/${deck.id}`} target="_blank" rel="noopener" className="text-xs font-semibold text-accent underline shrink-0">Sign in again</a>
+        )}
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
           <span className="hidden md:inline-flex"><CreditsMeter credits={credits} /></span>
           <Button variant="ghost" size="sm" onClick={() => setPanel("theme")} aria-label="Theme"><Palette size={16} /><span className="hidden md:inline">Theme</span></Button>

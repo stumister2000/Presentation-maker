@@ -169,10 +169,10 @@ export function EditableCard({ card, index, theme, ops, focusKey, setFocusKey, o
       ))}
       {card.content.length === 0 && (
         <button type="button" onClick={() => { const nb = blankBlock("paragraph"); ops.insertBlock(card.id, null, nb); setFocusKey(`${nb.id}:`); }}
-          className="deck-muted text-left opacity-70 hover:opacity-100">Empty card. Click to start typing.</button>
+          className="deck-muted text-left hover:underline">Empty card. Click to start typing.</button>
       )}
       {card.layout !== "none" && !card.imageUrl && (
-        <button type="button" onClick={() => openImage({ cardId: card.id })} className="no-print deck-muted self-start inline-flex items-center gap-1.5 text-[0.8em] opacity-60 hover:opacity-100">
+        <button type="button" onClick={() => openImage({ cardId: card.id })} className="no-print deck-muted self-start inline-flex items-center gap-1.5 text-[0.8em] hover:underline">
           <ImageIcon size={14} aria-hidden="true" />Use a photo instead of artwork
         </button>
       )}

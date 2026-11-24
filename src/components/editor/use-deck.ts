@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { newId, type Block, type Card, type Layout } from "@/lib/blocks";
 
-export type SaveState = "saved" | "saving" | "unsaved" | "error";
+export type SaveState = "saved" | "saving" | "unsaved" | "error" | "signedOut";
 
 /**
  * Card state for the editor: undo/redo history and debounced autosave.
@@ -18,6 +18,7 @@ export function useDeckCards(deckId: string, initial: Card[]) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inflight = useRef(false);
   const dirty = useRef(false);
+  const signedOut = useRef(false);
 
   const flush = useCallback(async () => {
     if (timer.current) { clearTimeout(timer.current); timer.current = null; }
@@ -29,6 +30,13 @@ export function useDeckCards(deckId: string, initial: Card[]) {
       const res = await fetch(`/api/decks/${deckId}/cards`, {
         method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ cards: ref.current }), keepalive: true,
       });
+      if (res.status === 401) {
+        // the session ended (signed out elsewhere, expired): retrying will not help
+        dirty.current = true;
+        signedOut.current = true;
+        setSave("signedOut");
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
       setSave(dirty.current ? "unsaved" : "saved");
     } catch {
@@ -37,11 +45,12 @@ export function useDeckCards(deckId: string, initial: Card[]) {
       timer.current = setTimeout(() => void flush(), 3000);
     } finally {
       inflight.current = false;
-      if (dirty.current && !timer.current) timer.current = setTimeout(() => void flush(), 400);
+      if (dirty.current && !timer.current && !signedOut.current) timer.current = setTimeout(() => void flush(), 400);
     }
   }, [deckId]);
 
   const schedule = useCallback(() => {
+    if (signedOut.current) return;
     setSave("unsaved");
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => void flush(), 700);
@@ -82,6 +91,13 @@ export function useDeckCards(deckId: string, initial: Card[]) {
     schedule();
     return true;
   }, [schedule]);
+
+  // after signing in again (usually in another tab), coming back here retries the save
+  useEffect(() => {
+    const onFocus = () => { if (signedOut.current) { signedOut.current = false; void flush(); } };
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [flush]);
 
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {

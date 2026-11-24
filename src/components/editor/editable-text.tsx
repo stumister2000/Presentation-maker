@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Inline } from "@/components/deck/card-view";
 import { cn } from "@/lib/cn";
 
@@ -26,13 +26,14 @@ export function EditableText({
   onFocused?: () => void;
   multiline?: boolean;
 }) {
-  const [editing, setEditing] = useState(false);
+  // a block created by Enter or the insert menu mounts already editing, so no keystroke is lost
+  const [editing, setEditing] = useState(() => Boolean(autoFocus));
   const ref = useRef<HTMLElement | null>(null);
   const Comp = tag as React.ElementType;
 
   useEffect(() => { if (autoFocus) setEditing(true); }, [autoFocus]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!editing || !el) return;
     el.textContent = value;
@@ -66,7 +67,7 @@ export function EditableText({
         onFocus={() => setEditing(true)}
         onClick={(e: React.MouseEvent) => { if ((e.target as HTMLElement).closest("a")) e.preventDefault(); }}
       >
-        {value ? <Inline text={value} /> : <span className="deck-muted opacity-70">{placeholder}</span>}
+        {value ? <Inline text={value} /> : <span className="deck-muted">{placeholder}</span>}
       </Comp>
     );
   }
