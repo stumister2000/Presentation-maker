@@ -15,11 +15,12 @@ export function PublicDeck({ slug, title, cards, themeId, textScale, watermark, 
   const [presenting, setPresenting] = useState<number | null>(null);
   const seen = useRef(new Set<number>());
   const started = useRef(Date.now());
+  const viewId = useRef(typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
 
-  // privacy-light analytics: how many cards were seen and for how long, keyed by a random cookie
+  // cookieless analytics: how many cards were seen and for how long, keyed by a random id for this page view
   useEffect(() => {
     const send = () => {
-      const body = JSON.stringify({ slug, cardsSeen: seen.current.size, seconds: Math.round((Date.now() - started.current) / 1000) });
+      const body = JSON.stringify({ slug, viewId: viewId.current, cardsSeen: seen.current.size, seconds: Math.round((Date.now() - started.current) / 1000) });
       if (navigator.sendBeacon) navigator.sendBeacon("/api/views", new Blob([body], { type: "application/json" }));
       else void fetch("/api/views", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true });
     };

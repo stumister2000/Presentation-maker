@@ -52,7 +52,7 @@ test.describe("F07 share", () => {
 
     await page.getByRole("button", { name: "More", exact: true }).click();
     await page.getByRole("menuitem", { name: "Analytics" }).click();
-    await expect(page.getByText("Viewers")).toBeVisible();
+    await expect(page.getByText("Views", { exact: true })).toBeVisible();
     await expect(page.locator("dd").first()).toHaveText("1");
   });
 

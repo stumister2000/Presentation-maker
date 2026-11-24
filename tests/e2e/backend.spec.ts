@@ -57,6 +57,23 @@ test.describe("access rules", () => {
   });
 });
 
+test.describe("account deletion", () => {
+  test("deleting an account removes the user and every deck, and signs them out", async ({ baseURL }) => {
+    const a = await pwRequest.newContext({ baseURL });
+    const email = await signUpApi(a);
+    const { deckId } = await generateDeckApi(a);
+    const deck = await (await a.get(`/api/decks/${deckId}`)).json();
+    await a.patch(`/api/decks/${deckId}`, { data: { linkAccess: "view" } });
+    expect((await a.delete("/api/account", { data: { confirm: "nope" } })).status()).toBe(400);
+    expect((await a.delete("/api/account", { data: { confirm: "DELETE" } })).status()).toBe(204);
+    expect((await a.get("/api/auth/me")).status()).toBe(401);
+    const b = await pwRequest.newContext({ baseURL });
+    expect((await b.post("/api/auth/login", { data: { email, password: "password123" } })).status()).toBe(401);
+    const pub = await b.get(`/p/${deck.slug}`);
+    expect(await pub.text()).toContain("This deck is not available");
+  });
+});
+
 test.describe("credits", () => {
   test("generation charges credits once and refuses when short", async ({ baseURL }) => {
     const a = await pwRequest.newContext({ baseURL });

@@ -13,7 +13,7 @@ export default function Privacy() {
         <li>Account: your email, name, and a hashed password (or your Google account id if you sign in with Google).</li>
         <li>Your content: the decks, outlines, notes and images links you create.</li>
         <li>Billing: your plan and Stripe customer id. We never see or store card numbers.</li>
-        <li>Shared-link analytics: for decks you share, a random viewer id in a cookie, how many cards were seen and for how long. No names, no IP addresses stored.</li>
+        <li>Shared-link analytics: for decks you share, how many cards each visit saw and for how long, under a random id made for that one visit. No cookies, no names, no IP addresses stored.</li>
         <li>Security: session cookies, and short-lived rate-limit counters held in memory.</li>
       </ul>
 
@@ -41,7 +41,7 @@ export default function Privacy() {
       </ul>
 
       <h2>Cookies</h2>
-      <p>One cookie keeps you signed in. One random viewer cookie counts views of shared decks. No advertising or third-party tracking cookies.</p>
+      <p>One cookie keeps you signed in. If you use Google sign-in, two more last ten minutes while you sign in. All are strictly necessary. No analytics, advertising or third-party tracking cookies.</p>
     </>
   );
 }

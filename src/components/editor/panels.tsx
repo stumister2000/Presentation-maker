@@ -146,11 +146,11 @@ export function AnalyticsDrawer({ open, onClose, deckId, shared }: { open: boole
       {error ? <p role="alert" className="text-danger text-sm">{error}</p> : !data ? (
         <div className="flex flex-col gap-3"><Skeleton className="h-20" /><Skeleton className="h-32" /></div>
       ) : data.viewers === 0 ? (
-        <EmptyState icon={<Eye size={30} />} title="No views yet" body={shared ? "Send the link to someone. Their visit shows up here." : "Turn on the share link first, then send it to someone."} />
+        <EmptyState icon={<Eye size={30} />} title="No views yet" body={shared ? "Send the link to someone. Each visit shows up here." : "Turn on the share link first, then send it to someone."} />
       ) : (
         <div className="flex flex-col gap-5">
           <dl className="grid grid-cols-3 gap-3">
-            {[{ icon: Eye, label: "Viewers", v: data.viewers }, { icon: Clock, label: "Avg time", v: `${Math.round(data.avgSeconds / 60)}m ${data.avgSeconds % 60}s` }, { icon: Layers, label: "Avg cards", v: data.avgCards }].map((s) => (
+            {[{ icon: Eye, label: "Views", v: data.viewers }, { icon: Clock, label: "Avg time", v: `${Math.round(data.avgSeconds / 60)}m ${data.avgSeconds % 60}s` }, { icon: Layers, label: "Avg cards", v: data.avgCards }].map((s) => (
               <div key={s.label} className="rounded-lg bg-surface p-3"><dt className="text-xs text-text-muted flex items-center gap-1"><s.icon size={13} aria-hidden="true" />{s.label}</dt><dd className="text-lg font-bold mt-1">{s.v}</dd></div>
             ))}
           </dl>

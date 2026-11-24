@@ -76,7 +76,8 @@ const g = globalThis as unknown as { __db?: Promise<Driver> };
 function driver(): Promise<Driver> {
   g.__db ??= (async () => {
     const d = process.env.DATABASE_URL ? await postgresDriver(process.env.DATABASE_URL) : await pgliteDriver();
-    await migrate(d);
+    // hosted Postgres is migrated by the deploy (npm run vercel-build), never by racing app instances
+    if (!process.env.DATABASE_URL || process.env.AUTO_MIGRATE === "1") await migrate(d);
     return d;
   })();
   return g.__db;
