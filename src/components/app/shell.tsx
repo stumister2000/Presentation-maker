@@ -1,36 +1,25 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Home, Star, LayoutTemplate, Trash2, Settings, Plus, Menu as MenuIcon, LogOut, X } from "lucide-react";
+import { Home, Star, LayoutTemplate, Trash2, Plus, Menu as MenuIcon, X } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { CreditsMeter } from "@/components/ui/misc";
-import { Menu } from "@/components/ui/menu";
-import { api } from "@/lib/api";
 import { cn } from "@/lib/cn";
 
-interface U { name: string; email: string; credits: number; plan: string }
 
 const NAV = [
   { href: "/home", label: "All decks", icon: Home, match: (p: string, v: string | null) => p === "/home" && !v },
   { href: "/home?view=favorites", label: "Favourites", icon: Star, match: (p: string, v: string | null) => p === "/home" && v === "favorites" },
   { href: "/templates", label: "Templates", icon: LayoutTemplate, match: (p: string) => p === "/templates" },
   { href: "/home?view=trash", label: "Trash", icon: Trash2, match: (p: string, v: string | null) => p === "/home" && v === "trash" },
-  { href: "/settings", label: "Settings", icon: Settings, match: (p: string) => p.startsWith("/settings") },
 ];
 
-export function AppShell({ user, children }: { user: U; children: React.ReactNode }) {
+export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const view = useSearchParams().get("view");
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  async function logout() {
-    await api("/api/auth/logout", { method: "POST" });
-    router.replace("/login");
-    router.refresh();
-  }
 
   const nav = (
     <nav aria-label="Main" className="flex flex-col gap-1">
@@ -57,25 +46,12 @@ export function AppShell({ user, children }: { user: U; children: React.ReactNod
           <Plus size={17} aria-hidden="true" />Create new
         </Link>
         {nav}
-        <div className="mt-auto rounded-md bg-bg border border-border p-3 text-sm">
-          <div className="flex items-center justify-between"><span className="font-semibold capitalize">{user.plan} plan</span><CreditsMeter credits={user.credits} /></div>
-          {user.plan === "free" && <Link href="/settings#plans" className="mt-2 block text-accent font-semibold">Upgrade for more</Link>}
-        </div>
       </aside>
       {open && <div className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setOpen(false)} aria-hidden="true" />}
       <div className="min-w-0 flex flex-col">
         <header className="h-[var(--layout-header)] flex items-center gap-3 px-4 sm:px-6 border-b border-border bg-bg sticky top-0 z-20">
           <Button icon variant="ghost" className="lg:hidden" aria-label="Open menu" onClick={() => setOpen(true)}><MenuIcon size={20} /></Button>
           <div className="lg:hidden"><Logo href="/home" /></div>
-          <div className="ml-auto flex items-center gap-3">
-            <CreditsMeter credits={user.credits} />
-            <Menu label="Account" trigger={
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-accent-soft text-accent text-sm font-bold">{(user.name || user.email)[0]?.toUpperCase()}</span>
-            } items={[
-              { label: user.email, onSelect: () => router.push("/settings"), icon: <Settings size={15} /> },
-              { label: "Sign out", onSelect: logout, icon: <LogOut size={15} /> },
-            ]} />
-          </div>
         </header>
         <main className="flex-1 px-4 sm:px-8 py-6 sm:py-8">{children}</main>
       </div>

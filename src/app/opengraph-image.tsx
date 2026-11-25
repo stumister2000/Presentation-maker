@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { APP_NAME } from "@/lib/brand";
 
-export const alt = `${APP_NAME}: presentations in a minute, price shown first`;
+export const alt = `${APP_NAME}: presentations in a minute`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -20,7 +20,7 @@ export default function OgImage() {
           <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1.05 }}>Presentations in a minute.</div>
           <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1.05, color: "#bfe6df" }}>The price before you start.</div>
         </div>
-        <div style={{ fontSize: 28, color: "#e4f3f0" }}>400 free credits · no card · cancel in one click</div>
+        <div style={{ fontSize: 28, color: "#e4f3f0" }}>No sign-up · no credits · open and start</div>
       </div>
     ),
     size,

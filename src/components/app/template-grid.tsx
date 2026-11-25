@@ -16,7 +16,7 @@ export function TemplateGrid() {
   return (
     <div className="mx-auto max-w-[var(--layout-content-max)]">
       <h1 className="text-xl font-bold">Templates</h1>
-      <p className="text-text-muted mt-1 mb-6">A structure to fill in, no credits needed.</p>
+      <p className="text-text-muted mt-1 mb-6">A ready-made structure to fill in.</p>
       <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {previews.map(({ t, first, count }) => (
           <li key={t.key} className="rounded-lg border border-border bg-bg overflow-hidden flex flex-col">

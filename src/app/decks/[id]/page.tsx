@@ -16,7 +16,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
   try {
     const deck = await getDeck(u.id, id);
     if (deck.archivedAt) redirect("/home?view=trash");
-    return <Editor deck={deck} credits={u.credits} />;
+    return <Editor deck={deck} />;
   } catch (e) {
     if (e instanceof HttpError && e.status === 404) notFound();
     throw e;

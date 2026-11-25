@@ -8,8 +8,8 @@ import type { Card } from "@/lib/blocks";
 import { getTheme, themeStyle, withScale } from "@/lib/themes";
 import { APP_NAME } from "@/lib/brand";
 
-export function PublicDeck({ slug, title, cards, themeId, textScale, watermark, embed }: {
-  slug: string; title: string; cards: Card[]; themeId: string; textScale: string; watermark: boolean; embed: boolean; firstTitle: string;
+export function PublicDeck({ slug, title, cards, themeId, textScale, embed }: {
+  slug: string; title: string; cards: Card[]; themeId: string; textScale: string; embed: boolean; firstTitle: string;
 }) {
   const theme = withScale(getTheme(themeId), textScale);
   const [presenting, setPresenting] = useState<number | null>(null);
@@ -51,9 +51,6 @@ export function PublicDeck({ slug, title, cards, themeId, textScale, watermark, 
           <section key={c.id} data-pcard data-index={i} aria-label={`Card ${i + 1}`}><CardView card={c} theme={theme} /></section>
         ))}
       </main>
-      {watermark && (
-        <Link href="/" className="fixed bottom-4 right-4 rounded-pill bg-text text-bg text-xs font-semibold px-3 py-1.5 shadow-pop">Made with {APP_NAME}</Link>
-      )}
       {presenting !== null && <Presenter cards={cards} theme={theme} start={presenting} onExit={() => setPresenting(null)} showNotes={false} />}
     </div>
   );

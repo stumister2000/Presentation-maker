@@ -1,4 +1,4 @@
 import { route } from "@/server/http";
-import { requireUser } from "@/server/auth";
+import { currentUser } from "@/server/auth";
 
-export const GET = route(async () => requireUser());
+export const GET = route(async () => currentUser());

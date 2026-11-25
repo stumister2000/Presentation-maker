@@ -37,18 +37,13 @@ export const DEFAULT_SETTINGS: GenSettings = {
 
 export const LANGUAGES = ["English", "Spanish", "French", "German", "Portuguese", "Italian", "Dutch", "Japanese", "Chinese (Simplified)", "Hindi"];
 
-/** Credits: a flat base plus a little per card, so small decks are cheap. */
-export function generationCost(numCards: number): number {
-  return 10 + numCards * 3;
-}
-export const AI_EDIT_COST = 5;
 export const MAX_INPUT_CHARS = 20000;
 
 export type StreamEvent =
   | { type: "outline"; item: OutlineItem; index: number }
   | { type: "deck"; id: string }
   | { type: "card"; index: number; card: unknown }
-  | { type: "done"; credits?: number }
+  | { type: "done" }
   | { type: "error"; message: string; code?: string };
 
 /** Reads an NDJSON response stream and calls onEvent for every complete line. */

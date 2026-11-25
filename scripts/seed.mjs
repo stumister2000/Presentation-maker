@@ -1,26 +1,14 @@
-// npm run db:seed: a demo account with realistic, invented content.
-// Sign in as demo@example.com / demo-password-1. Stop the dev server first when using PGlite.
-import { randomBytes, scryptSync, randomUUID } from "node:crypto";
+// npm run db:seed: two example decks with invented content for the local user.
+// Stop the dev server first when using PGlite.
+import { randomBytes, randomUUID } from "node:crypto";
 import { connect, migrate } from "./db.mjs";
 
 const db = await connect();
 await migrate(db);
-const email = "demo@example.com";
-const salt = randomBytes(16);
-const key = scryptSync("demo-password-1", salt, 32, { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 });
-const hash = `scrypt$${salt.toString("base64")}$${key.toString("base64")}`;
+const email = "local@fairdeck.local"; // the built-in local user the app runs as
 
-const existing = await db.query("select id from users where lower(email) = $1", [email]);
-if (existing.length) {
-  console.log(`${email} already exists; leaving it alone`);
-  await db.close();
-  process.exit(0);
-}
-const [u] = await db.query(
-  "insert into users (email, name, password_hash, credits, email_verified_at) values ($1, 'Robin Demo', $2, 400, now()) returning id",
-  [email, hash],
-);
-await db.query("insert into credit_ledger (user_id, delta, reason) values ($1, 400, 'signup')", [u.id]);
+let [u] = await db.query("select id from users where lower(email) = $1", [email]);
+if (!u) [u] = await db.query("insert into users (email, name, credits) values ($1, 'You', 0) returning id", [email]);
 
 const id = () => randomUUID();
 const decks = [

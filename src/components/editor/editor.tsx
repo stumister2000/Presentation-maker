@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/ui/menu";
-import { CreditsMeter } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/toast";
 import { ScaledCard } from "@/components/deck/scaled-card";
 import { Presenter } from "@/components/present/presenter";
@@ -29,7 +28,7 @@ const LAYOUT_LABEL: Record<Layout, string> = {
 
 type Panel = null | "theme" | "ai" | "share" | "export" | "analytics";
 
-export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits: number }) {
+export function Editor({ deck }: { deck: Deck }) {
   const router = useRouter();
   const toast = useToast();
   const d = useDeckCards(deck.id, deck.cards);
@@ -37,7 +36,6 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
   const [themeId, setThemeId] = useState(deck.themeId);
   const [textScale, setTextScale] = useState(deck.textScale);
   const [access, setAccess] = useState(deck.linkAccess);
-  const [credits, setCredits] = useState(initialCredits);
   const [panel, setPanel] = useState<Panel>(null);
   const [aiCard, setAiCard] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
@@ -109,11 +107,7 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
           <SaveIcon size={13} className={d.save === "saving" ? "animate-spin" : undefined} aria-hidden="true" />
           <span className={d.save === "saved" || d.save === "saving" || d.save === "unsaved" ? "sr-only sm:not-sr-only" : undefined}>{saveLabel}</span>
         </span>
-        {d.save === "signedOut" && (
-          <a href={`/login?next=/decks/${deck.id}`} target="_blank" rel="noopener" className="text-xs font-semibold text-accent underline shrink-0">Sign in again</a>
-        )}
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          <span className="hidden md:inline-flex"><CreditsMeter credits={credits} /></span>
           <Button variant="ghost" size="sm" onClick={() => setPanel("theme")} aria-label="Theme"><Palette size={16} /><span className="hidden md:inline">Theme</span></Button>
           <Button variant="ghost" size="sm" onClick={() => { setAiCard(null); setPanel("ai"); }} aria-label="Edit with AI"><Sparkles size={16} /><span className="hidden md:inline">AI</span></Button>
           <Button size="sm" onClick={() => setPanel("share")} aria-label="Share"><Share2 size={16} /><span className="hidden sm:inline">Share</span></Button>
@@ -210,8 +204,8 @@ export function Editor({ deck, credits: initialCredits }: { deck: Deck; credits:
       <ThemeDrawer open={panel === "theme"} onClose={() => setPanel(null)} value={themeId} onChange={(k) => { setThemeId(k); void patch({ themeId: k }); }}
         textScale={textScale} onTextScale={(s) => { setTextScale(s); void patch({ textScale: s }); }} />
       <AiDrawer open={panel === "ai"} onClose={() => setPanel(null)} deckId={deck.id} cardId={aiCard}
-        cardLabel={aiCard ? cardTitle(d.cards.find((c) => c.id === aiCard) ?? d.cards[0]) : null} credits={credits}
-        onApplied={async (cards, cr) => { await d.flush(); d.replaceCards(cards); if (typeof cr === "number") setCredits(cr); toast(`Updated ${cards.length} card${cards.length === 1 ? "" : "s"}`, "success"); }} />
+        cardLabel={aiCard ? cardTitle(d.cards.find((c) => c.id === aiCard) ?? d.cards[0]) : null}
+        onApplied={async (cards) => { await d.flush(); d.replaceCards(cards); toast(`Updated ${cards.length} card${cards.length === 1 ? "" : "s"}`, "success"); }} />
       <ShareModal open={panel === "share"} onClose={() => setPanel(null)} slug={deck.slug} access={access} onAccess={(a) => { setAccess(a); void patch({ linkAccess: a }); }} />
       <ExportModal open={panel === "export"} onClose={() => setPanel(null)} deckId={deck.id} onPptx={() => exportPptx(title, d.cards, theme)} />
       <AnalyticsDrawer open={panel === "analytics"} onClose={() => setPanel(null)} deckId={deck.id} shared={access === "view"} />

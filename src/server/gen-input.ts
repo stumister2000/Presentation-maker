@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { LANGUAGES, MAX_INPUT_CHARS, type GenSettings } from "@/lib/generation";
-import { PLAN_LIMITS, type Plan } from "./queries";
+import { MAX_CARDS } from "./queries";
 import { getTheme } from "@/lib/themes";
 
 export const SettingsSchema = z.object({
@@ -23,10 +23,10 @@ export const InputSchema = z.object({
   settings: SettingsSchema,
 });
 
-export function clampSettings(s: z.infer<typeof SettingsSchema>, plan: Plan): GenSettings {
+export function clampSettings(s: z.infer<typeof SettingsSchema>): GenSettings {
   return {
     ...s,
-    numCards: Math.min(s.numCards, PLAN_LIMITS[plan].maxCards),
+    numCards: Math.min(s.numCards, MAX_CARDS),
     language: LANGUAGES.includes(s.language) ? s.language : "English",
     themeId: getTheme(s.themeId).key,
   };

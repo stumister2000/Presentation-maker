@@ -7,7 +7,7 @@ import { Segmented } from "@/components/ui/segmented";
 import { Chip } from "@/components/ui/chip";
 import { Modal, Drawer } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
-import { EmptyState, Skeleton, CreditsMeter } from "@/components/ui/misc";
+import { EmptyState, Skeleton } from "@/components/ui/misc";
 import { ThemeGrid } from "@/components/deck/theme-picker";
 import { CardView } from "@/components/deck/card-view";
 import { THEMES, themeStyle } from "@/lib/themes";
@@ -74,7 +74,7 @@ export default function DesignPage() {
         </div>
       </Section>
 
-      <Section title="Segmented, chips, credits">
+      <Section title="Segmented and chips">
         <div className="flex flex-wrap gap-4 items-center">
           <Segmented label="Format" value={format} onChange={setFormat} options={[
             { value: "presentation", label: "Presentation", icon: <Presentation size={15} /> },
@@ -82,9 +82,6 @@ export default function DesignPage() {
           ]} />
           <Chip>Suggestion chip</Chip>
           <Chip selected>Selected</Chip>
-          <CreditsMeter credits={360} />
-          <CreditsMeter credits={40} />
-          <CreditsMeter credits={0} />
         </div>
       </Section>
 

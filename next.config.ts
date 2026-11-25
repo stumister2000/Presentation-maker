@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   serverExternalPackages: ["@electric-sql/pglite"],
   images: { remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }] },
+  async redirects() {
+    // sign-in, plans and settings were removed: send old links to the decks
+    return ["/login", "/signup", "/reset", "/settings", "/auth/verify", "/privacy", "/terms"].map((source) => ({ source, destination: "/home", permanent: false }));
+  },
   async headers() {
     return [
       {

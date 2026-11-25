@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { TextArea, TextField } from "@/components/ui/field";
 import { Segmented } from "@/components/ui/segmented";
-import { Skeleton, CreditsMeter, EmptyState } from "@/components/ui/misc";
+import { Skeleton, EmptyState } from "@/components/ui/misc";
 import { ThemeGrid } from "@/components/deck/theme-picker";
 import { useToast } from "@/components/ui/toast";
 import { api, ApiError } from "@/lib/api";
-import { AI_EDIT_COST } from "@/lib/generation";
 import { isSafeUrl, type Card } from "@/lib/blocks";
 
 export function ThemeDrawer({ open, onClose, value, onChange, textScale, onTextScale }: {
@@ -32,9 +31,9 @@ export function ThemeDrawer({ open, onClose, value, onChange, textScale, onTextS
 
 const SUGGESTIONS = ["Make it shorter", "Turn paragraphs into bullets", "Add visuals to text-only cards", "Make it more persuasive", "Simplify for a general audience", "Fix spelling and grammar"];
 
-export function AiDrawer({ open, onClose, deckId, cardId, cardLabel, credits, onApplied }: {
-  open: boolean; onClose: () => void; deckId: string; cardId: string | null; cardLabel: string | null; credits: number;
-  onApplied: (cards: Card[], credits?: number) => void;
+export function AiDrawer({ open, onClose, deckId, cardId, cardLabel, onApplied }: {
+  open: boolean; onClose: () => void; deckId: string; cardId: string | null; cardLabel: string | null;
+  onApplied: (cards: Card[]) => void;
 }) {
   const [text, setText] = useState("");
   const [scope, setScope] = useState<"card" | "deck">(cardId ? "card" : "deck");
@@ -46,11 +45,11 @@ export function AiDrawer({ open, onClose, deckId, cardId, cardLabel, credits, on
     if (instruction.trim().length < 2) return;
     setBusy(true); setError(null);
     try {
-      const r = await api<{ cards: Card[]; credits?: number }>("/api/ai/edit", { json: { deckId, cardId: scope === "card" ? cardId : null, instruction } });
-      onApplied(r.cards, r.credits);
+      const r = await api<{ cards: Card[] }>("/api/ai/edit", { json: { deckId, cardId: scope === "card" ? cardId : null, instruction } });
+      onApplied(r.cards);
       setText("");
     } catch (e) {
-      setError(e instanceof ApiError && e.code === "out_of_credits" ? "You are out of credits. Upgrade in Settings to keep editing with AI." : (e as Error).message);
+      setError((e as Error).message);
     } finally { setBusy(false); }
   }
 
@@ -67,7 +66,7 @@ export function AiDrawer({ open, onClose, deckId, cardId, cardLabel, credits, on
         <div className="flex flex-wrap gap-2">{SUGGESTIONS.map((s) => <Chip key={s} disabled={busy} onClick={() => run(s)}>{s}</Chip>)}</div>
         {error && <p role="alert" className="text-sm text-danger">{error}</p>}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-text-muted flex items-center gap-1">{AI_EDIT_COST} credits per edit · <CreditsMeter credits={credits} /></span>
+          <span />
           <Button variant="primary" loading={busy} onClick={() => run(text)} disabled={!text.trim()}><Sparkles size={16} />Apply</Button>
         </div>
         <p className="text-xs text-text-muted">Not what you wanted? Press Ctrl/⌘ + Z to undo.</p>

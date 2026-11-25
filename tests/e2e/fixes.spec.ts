@@ -1,24 +1,17 @@
 import { test, expect, a11y, createDeckUi, cardSection } from "./fixtures";
-import { signUpUi, generateDeckApi } from "./helpers";
+import { signUpUi } from "./helpers";
 
 // Fixes that came out of replica-entrepreneur (replica/fixes.md).
 test.beforeEach(async ({ page }) => { await signUpUi(page); });
 
-test("X1-H1 out of credits: build the deck from my outline, free, nothing lost", async ({ page }) => {
-  for (let i = 0; i < 10; i++) await generateDeckApi(page.request, "", "Drain", 10); // 0 credits left
-  await page.goto("/create/generate");
+test("X1-H1 'use my outline as written' builds the deck from my words, no AI", async ({ page }) => {
   await page.getByRole("textbox", { name: "Describe your deck" }).fill("My big idea");
   await page.getByRole("button", { name: "Draft outline" }).click();
   await expect(page.getByRole("button", { name: "Make my deck" })).toBeEnabled();
   await page.getByLabel("Card 1 title").fill("My own title, kept exactly");
-  await page.getByRole("button", { name: "Make my deck" }).click();
-  const dialog = page.getByRole("dialog", { name: "Not enough credits for AI writing" });
-  await expect(dialog).toBeVisible();
-  await a11y(page);
-  await dialog.getByRole("button", { name: "Build from my outline, free" }).click();
+  await page.getByRole("button", { name: "Use my outline as written (no AI)" }).click();
   await page.waitForURL(/\/decks\//);
   await expect(cardSection(page, 1).getByRole("textbox").first()).toHaveText("My own title, kept exactly");
-  await expect(page.getByTestId("credits").first()).toHaveText("0");
 });
 
 test("X2-H1 deck-wide text size applies everywhere and persists", async ({ page }) => {

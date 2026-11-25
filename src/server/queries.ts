@@ -7,13 +7,8 @@ import { DEFAULT_THEME, getTheme } from "@/lib/themes";
 // Data layer. Every function that touches user-owned rows takes userId and
 // filters on it. That is the access rule (see replica/architecture.md).
 
-export const SIGNUP_CREDITS = 400;
-export const PLAN_LIMITS = {
-  free: { maxCards: 10, watermark: true, monthlyCredits: 0 },
-  plus: { maxCards: 20, watermark: false, monthlyCredits: 1000 },
-  pro: { maxCards: 40, watermark: false, monthlyCredits: 2500 },
-} as const;
-export type Plan = keyof typeof PLAN_LIMITS;
+export const MAX_CARDS = 40;
+export type Plan = "free" | "plus" | "pro";
 
 export type DeckFormat = "presentation" | "document" | "webpage" | "social";
 export type LinkAccess = "none" | "view";
@@ -51,58 +46,6 @@ function cardFromRow(r: Record<string, unknown>): Card {
     content: typeof r.content === "string" ? JSON.parse(r.content) : r.content,
     notes: r.notes,
   })!;
-}
-
-/* ---------- users ---------- */
-
-export async function createUser(email: string, name: string, passwordHash: string) {
-  return tx(async (t) => {
-    const existing = await t`select id from users where lower(email) = lower(${email})`;
-    if (existing.length) throw new HttpError(409, "An account with that email already exists.", "email_taken");
-    const [u] = await t<{ id: string }>`
-      insert into users (email, name, password_hash, credits) values (${email}, ${name}, ${passwordHash}, ${SIGNUP_CREDITS}) returning id`;
-    await t`insert into credit_ledger (user_id, delta, reason) values (${u.id}, ${SIGNUP_CREDITS}, 'signup')`;
-    return u.id;
-  });
-}
-
-export async function findUserByEmail(email: string) {
-  const rows = await q<{ id: string; password_hash: string | null }>`select id, password_hash from users where lower(email) = lower(${email})`;
-  return rows[0] ?? null;
-}
-
-export async function getUser(userId: string) {
-  const rows = await q<{ id: string; email: string; name: string; plan: Plan; credits: number; stripe_customer_id: string | null }>`
-    select id, email, name, plan, credits, stripe_customer_id from users where id = ${userId}`;
-  return rows[0] ?? null;
-}
-
-export async function updateUserName(userId: string, name: string) {
-  await q`update users set name = ${name}, updated_at = now() where id = ${userId}`;
-}
-
-export async function deleteUser(userId: string) {
-  await q`delete from users where id = ${userId}`;
-}
-
-/* ---------- credits ---------- */
-
-/** Take credits or throw 402. Runs inside the caller's transaction when given one. */
-export async function spendCredits(userId: string, amount: number, reason: "generation" | "ai_edit", refId: string | null, t: Q = q) {
-  if (amount <= 0) return;
-  const rows = await t<{ credits: number }>`
-    update users set credits = credits - ${amount}, updated_at = now()
-    where id = ${userId} and credits >= ${amount} returning credits`;
-  if (!rows.length) throw new HttpError(402, "You are out of AI credits.", "out_of_credits");
-  await t`insert into credit_ledger (user_id, delta, reason, ref_id) values (${userId}, ${-amount}, ${reason}, ${refId})`;
-}
-
-export async function refundCredits(userId: string, amount: number, refId: string) {
-  if (amount <= 0) return;
-  await tx(async (t) => {
-    await t`update users set credits = credits + ${amount} where id = ${userId}`;
-    await t`insert into credit_ledger (user_id, delta, reason, ref_id) values (${userId}, ${amount}, 'refund', ${refId})`;
-  });
 }
 
 /* ---------- decks ---------- */
@@ -166,12 +109,10 @@ export async function getDeck(userId: string, deckId: string): Promise<Deck> {
 }
 
 /** Public read: only by slug, only when shared, never from the trash. */
-export async function getPublicDeck(slug: string): Promise<(Deck & { ownerPlan: Plan }) | null> {
-  const rows = await q`
-    select d.*, u.plan as owner_plan from decks d join users u on u.id = d.user_id
-    where d.slug = ${slug} and d.link_access = 'view' and d.archived_at is null`;
+export async function getPublicDeck(slug: string): Promise<Deck | null> {
+  const rows = await q`select * from decks where slug = ${slug} and link_access = 'view' and archived_at is null`;
   if (!rows.length) return null;
-  return { ...deckFromRow(rows[0], await loadCards(rows[0].id as string)), ownerPlan: rows[0].owner_plan as Plan };
+  return deckFromRow(rows[0], await loadCards(rows[0].id as string));
 }
 
 async function insertCards(t: Q, deckId: string, cards: Card[]) {
@@ -270,16 +211,13 @@ export async function deleteDeckForever(userId: string, deckId: string) {
 
 export async function createGeneration(
   userId: string,
-  g: { source: "prompt" | "paste" | "import" | "ai_edit"; inputText: string; settings: object; credits: number; deckId?: string | null },
+  g: { source: "prompt" | "paste" | "import" | "ai_edit"; inputText: string; settings: object; deckId?: string | null },
 ): Promise<string> {
-  return tx(async (t) => {
-    const [row] = await t<{ id: string }>`
-      insert into generations (user_id, deck_id, source, input_text, settings, status, credits_used)
-      values (${userId}, ${g.deckId ?? null}, ${g.source}, ${g.inputText.slice(0, 20000)}, ${g.settings}, 'generating', ${g.credits})
-      returning id`;
-    await spendCredits(userId, g.credits, g.source === "ai_edit" ? "ai_edit" : "generation", row.id, t);
-    return row.id;
-  });
+  const [row] = await q<{ id: string }>`
+    insert into generations (user_id, deck_id, source, input_text, settings, status, credits_used)
+    values (${userId}, ${g.deckId ?? null}, ${g.source}, ${g.inputText.slice(0, 20000)}, ${g.settings}, 'generating', 0)
+    returning id`;
+  return row.id;
 }
 
 export async function finishGeneration(id: string, status: "completed" | "failed", patch: { deckId?: string; outline?: unknown; error?: string } = {}) {

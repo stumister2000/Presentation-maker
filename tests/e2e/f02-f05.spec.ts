@@ -124,17 +124,6 @@ test.describe("F03 edit a card", () => {
     await expect(cardSection(page, 1).getByRole("textbox", { name: /^Heading, card 1/ })).toHaveText("Written offline");
   });
 
-  test("F03-E7 signed out mid-edit says so instead of 'offline'", async ({ page, context }) => {
-    await createDeckUi(page, "Session test", 2);
-    await context.clearCookies();
-    const heading = cardSection(page, 1).getByRole("textbox", { name: /^Heading, card 1/ });
-    await heading.click();
-    await page.keyboard.type(" changed");
-    await page.keyboard.press("Escape");
-    await expect(page.getByTestId("save-state")).toHaveText(/Signed out/, { timeout: 5000 });
-    await expect(page.getByRole("link", { name: "Sign in again" })).toBeVisible();
-  });
-
   test("F03-E8 two tabs: the later save wins and nothing crashes", async ({ page, context }) => {
     const id = await createDeckUi(page, "Two tabs", 2);
     const other = await context.newPage();
@@ -153,7 +142,7 @@ test.describe("F03 edit a card", () => {
 });
 
 test.describe("F04 edit with AI", () => {
-  test("F04-H1 apply a suggestion, credits drop, undo restores", async ({ page }) => {
+  test("F04-H1 apply a suggestion, cards update", async ({ page }) => {
     await createDeckUi(page, "AI edit test", 3);
     await page.getByRole("button", { name: "More for card 2" }).click();
     await page.getByRole("menuitem", { name: "Duplicate card" }).click(); // something to compare
@@ -163,7 +152,6 @@ test.describe("F04 edit with AI", () => {
     await page.getByRole("button", { name: "Make it shorter" }).click();
     await expect(page.getByText(/Updated \d+ cards?/)).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(page.getByTestId("credits").first()).toHaveText("376"); // 400 - 19 (3 cards) - 5 (AI edit)
     expect(await page.getByRole("region", { name: /^Card \d+$/ }).count()).toBe(before);
   });
 });

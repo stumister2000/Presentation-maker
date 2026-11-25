@@ -1,19 +1,18 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUp, ArrowDown, Plus, Trash2, Sparkles, Presentation, FileText, Shuffle, FileUp, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TextArea, TextField, Select } from "@/components/ui/field";
 import { Segmented } from "@/components/ui/segmented";
 import { Chip } from "@/components/ui/chip";
-import { Modal } from "@/components/ui/modal";
-import { Skeleton, CreditsMeter } from "@/components/ui/misc";
+import { Skeleton } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/toast";
 import { ThemeGrid } from "@/components/deck/theme-picker";
 import { ScaledCard } from "@/components/deck/scaled-card";
 import { apiStream, ApiError } from "@/lib/api";
-import { DEFAULT_SETTINGS, LANGUAGES, MAX_INPUT_CHARS, generationCost, readStream, type GenSettings, type OutlineItem } from "@/lib/generation";
+import { DEFAULT_SETTINGS, LANGUAGES, MAX_INPUT_CHARS, readStream, type GenSettings, type OutlineItem } from "@/lib/generation";
 import { sanitizeCard, type Card } from "@/lib/blocks";
 import { getTheme } from "@/lib/themes";
 
@@ -29,9 +28,8 @@ const EXAMPLES = [
   "The history of the bicycle in 8 slides",
 ];
 
-export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: Mode; credits: number; maxCards: number }) {
+export function CreateFlow({ mode, maxCards }: { mode: Mode; maxCards: number }) {
   const router = useRouter();
-  const welcome = useSearchParams().get("welcome") === "1";
   const toast = useToast();
   const [step, setStep] = useState<Step>("input");
   const [input, setInput] = useState("");
@@ -40,12 +38,9 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
   const [streaming, setStreaming] = useState(false);
   const [cards, setCards] = useState<Card[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [credits, setCredits] = useState(initialCredits);
-  const [noCredits, setNoCredits] = useState(false);
   const abort = useRef<AbortController | null>(null);
   const source = mode === "generate" ? "prompt" : "paste";
   const set = <K extends keyof GenSettings>(k: K, v: GenSettings[K]) => setS((x) => ({ ...x, [k]: v }));
-  const cost = generationCost(outline.length || s.numCards);
 
   useEffect(() => () => abort.current?.abort(), []);
 
@@ -70,8 +65,6 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
   async function generate(free = false) {
     const clean = outline.map((o) => ({ title: o.title.trim(), bullets: o.bullets.map((b) => b.trim()).filter(Boolean) })).filter((o) => o.title);
     if (!clean.length) { setError("Add at least one card title."); return; }
-    if (!free && credits < generationCost(clean.length)) { setNoCredits(true); return; }
-    setNoCredits(false);
     setError(null);
     setStep("generating");
     setCards([]);
@@ -83,13 +76,11 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
       await readStream(res, (e) => {
         if (e.type === "deck") deckId = e.id;
         if (e.type === "card") { const c = sanitizeCard(e.card); if (c) setCards((xs) => [...xs, c]); }
-        if (e.type === "done" && typeof e.credits === "number") setCredits(e.credits);
         if (e.type === "error") failed = e.message;
       });
       if (failed) throw new ApiError(500, failed);
       if (deckId) router.push(`/decks/${deckId}?new=1`);
     } catch (e) {
-      if (e instanceof ApiError && e.code === "out_of_credits") { setNoCredits(true); setStep("outline"); return; }
       if ((e as Error).name === "AbortError") return;
       setError((e as Error).message);
       if (deckId) toast("Some cards were made before the error. They are in your dashboard.", "info");
@@ -177,13 +168,13 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
               placeholder="e.g. One idea per card. No bullet points. Say 'members', never 'customers'."
               hint="The AI follows these as written." />
             <div className="rounded-lg bg-surface p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between text-sm"><span>{outline.length} cards</span><span className="flex items-center gap-1.5">Uses {cost} of <CreditsMeter credits={credits} /></span></div>
+              <div className="text-sm">{outline.length} cards</div>
               {error && <p role="alert" className="text-sm text-danger">{error}</p>}
               <Button variant="primary" size="lg" disabled={streaming || !outline.length} onClick={() => generate()}><Sparkles size={18} />Make my deck</Button>
+              <Button variant="ghost" size="sm" disabled={streaming || !outline.length} onClick={() => generate(true)}>Use my outline as written (no AI)</Button>
             </div>
           </aside>
         </div>
-        <OutOfCredits open={noCredits} onClose={() => setNoCredits(false)} need={cost} have={credits} onFree={() => generate(true)} />
       </div>
     );
   }
@@ -192,7 +183,6 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
   return (
     <div className="mx-auto max-w-3xl">
       <Link href="/create" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text mb-6"><ArrowLeft size={16} />All options</Link>
-      {welcome && <p className="mb-4 rounded-md bg-accent-soft text-accent px-4 py-3 text-sm font-medium">Welcome! You have {credits} credits. Your first deck takes about a minute.</p>}
       <h1 className="text-xl sm:text-[1.75rem] font-bold text-center">
         {mode === "generate" ? "What are we making?" : mode === "paste" ? "Paste your notes" : "Import a file"}
       </h1>
@@ -259,12 +249,3 @@ export function CreateFlow({ mode, credits: initialCredits, maxCards }: { mode: 
   );
 }
 
-function OutOfCredits({ open, onClose, need, have, onFree }: { open: boolean; onClose: () => void; need: number; have: number; onFree: () => void }) {
-  return (
-    <Modal open={open} onClose={onClose} title="Not enough credits for AI writing" size="sm"
-      footer={<><Link href="/settings#plans" className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface">See plans</Link><Button variant="primary" onClick={onFree}>Build from my outline, free</Button></>}>
-      <p className="text-sm text-text-muted">AI writing for this deck needs {need} credits and you have {have}.</p>
-      <p className="text-sm text-text-muted mt-2">You can still make it: we lay out your outline as it is, with your theme, at no cost. Nothing you wrote is lost.</p>
-    </Modal>
-  );
-}

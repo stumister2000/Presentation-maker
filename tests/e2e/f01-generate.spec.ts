@@ -4,20 +4,19 @@ import { signUpUi, generateDeckApi } from "./helpers";
 test.describe("F01 generate a deck from a prompt", () => {
   test.beforeEach(async ({ page }) => { await signUpUi(page); });
 
-  test("F01-H1 prompt → outline → deck, credits charged", async ({ page }) => {
+  test("F01-H1 prompt → outline → deck", async ({ page }) => {
     await a11y(page);
     await page.getByLabel("Number of cards").selectOption("5");
     await page.getByRole("textbox", { name: "Describe your deck" }).fill("Quarterly review for a small coffee roaster");
     await page.getByRole("button", { name: "Draft outline" }).click();
     await expect(page.getByRole("heading", { name: "Shape the outline" })).toBeVisible();
     await expect(page.getByLabel(/Card \d+ title/)).toHaveCount(5);
-    await expect(page.getByText("Uses 25 of")).toBeVisible();
     await a11y(page);
     await page.getByRole("radio", { name: /Ink/ }).click();
     await page.getByRole("button", { name: "Make my deck" }).click();
     await page.waitForURL(/\/decks\//);
     await expect(page.getByRole("region", { name: /^Card \d+$/ })).toHaveCount(5);
-    await expect(page.getByTestId("credits").first()).toHaveText("375");
+    await expect(page.getByTestId("credits")).toHaveCount(0); // no credit system
     await a11y(page);
   });
 
@@ -76,13 +75,9 @@ test.describe("F01 generate a deck from a prompt", () => {
     await expect(page.getByRole("region", { name: /^Card \d+$/ })).toHaveCount(4);
   });
 
-  test("F01-N1 out of credits shows the upgrade prompt, not an error", async ({ page }) => {
-    for (let i = 0; i < 10; i++) await generateDeckApi(page.request, "", "Drain", 10); // 400 - 10 x 40 = 0
-    await page.goto("/create/generate");
-    await page.getByRole("textbox", { name: "Describe your deck" }).fill("One too many");
-    await page.getByRole("button", { name: "Draft outline" }).click();
-    await page.getByRole("button", { name: "Make my deck" }).click();
-    await expect(page.getByRole("dialog", { name: "Not enough credits for AI writing" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "See plans" })).toHaveAttribute("href", "/settings#plans");
+  test("F01-N1 no limits: 40 cards allowed and many decks in a row", async ({ page }) => {
+    await expect(page.getByLabel("Number of cards").locator("option")).toHaveCount(40);
+    for (let i = 0; i < 12; i++) await generateDeckApi(page.request, "", `Burst ${i}`, 10);
+    await createDeckUi(page, "Still not blocked", 3);
   });
 });

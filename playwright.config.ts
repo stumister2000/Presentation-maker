@@ -31,7 +31,7 @@ export default defineConfig({
   ],
   webServer: [
     { command: "node tests/mock-anthropic.mjs", port: 3299, reuseExistingServer: false, env: { MOCK_ANTHROPIC_PORT: "3299" } },
-    { command: "npx next start -p 3200", port: 3200, reuseExistingServer: false, env: { ...common, APP_URL: "http://localhost:3200", AI_ENGINE: "offline", RATE_LIMIT_MULTIPLIER: "20" } },
+    { command: "npx next start -p 3200", port: 3200, reuseExistingServer: false, env: { ...common, APP_URL: "http://localhost:3200", AI_ENGINE: "offline", } },
     {
       command: "npx next start -p 3201", port: 3201, reuseExistingServer: false,
       env: { ...common, APP_URL: "http://localhost:3201", AI_ENGINE: "claude", ANTHROPIC_API_KEY: "test-key", ANTHROPIC_BASE_URL: "http://localhost:3299", EMAIL_OUTBOX: outbox + ".claude" },
